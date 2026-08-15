@@ -1,0 +1,9 @@
+{
+  "economy.balance": "<yellow>Ваш баланс: <green>%s <yellow>монет.",
+  "economy.not_enough": "<red>Недостаточно средств. Нужно %s монет.",
+  "economy.paid": "<green>Вы перевели <yellow>%s <green>монет игроку %s.",
+  "economy.received": "<green>Вы получили <yellow>%s <green>монет от %s.",
+  "claim.success": "<green>Вы успешно заприватили этот чанк за %s монет!",
+  "claim.already_claimed": "<red>Этот чанк уже кем-то запривачен.",
+  "claim.denied": "<red>Эта территория запривачена!"
+}

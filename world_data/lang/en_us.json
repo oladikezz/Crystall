@@ -1,0 +1,9 @@
+{
+  "economy.balance": "<yellow>Your balance: <green>%s <yellow>coins.",
+  "economy.not_enough": "<red>Not enough money. You need %s coins.",
+  "economy.paid": "<green>You paid <yellow>%s <green>to %s.",
+  "economy.received": "<green>You received <yellow>%s <green>from %s.",
+  "claim.success": "<green>You successfully claimed this chunk for %s coins!",
+  "claim.already_claimed": "<red>This chunk is already claimed by someone else.",
+  "claim.denied": "<red>This territory is claimed!"
+}

@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: crystall-db
+    environment:
+      POSTGRES_DB: crystall
+      POSTGRES_USER: crystall
+      POSTGRES_PASSWORD: crystall
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crystall"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Crystall Minecraft Server
+  crystall-server:
+    build: .
+    container_name: crystall-server
+    ports:
+      - "25565:25565"
+      - "25566:25566"  # REST API + Prometheus metrics
+    volumes:
+      - ./config.yml:/app/config.yml
+      - ./plugins:/app/plugins
+      - world_data:/app/world_data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Prometheus Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: crystall-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - crystall-server
+
+  # Grafana Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: crystall-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    depends_on:
+      - prometheus
+
+volumes:
+  pgdata:
+  world_data:
