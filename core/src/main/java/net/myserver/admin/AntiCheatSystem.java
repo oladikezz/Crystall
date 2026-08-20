@@ -9,15 +9,19 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.PlayerMoveEvent;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.instance.block.Block;
 import net.myserver.permissions.RoleManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AntiCheatSystem {
+    private static final Logger log = LoggerFactory.getLogger(AntiCheatSystem.class);
     private static final double MAX_SPEED_SQUARED = 2.0; // С запасом на прыжки
-    private static final Map<UUID, Integer> airTicks = new HashMap<>();
+    public static final Map<UUID, Integer> airTicks = new ConcurrentHashMap<>();
 
     public static void register(GlobalEventHandler handler) {
         handler.addListener(PlayerMoveEvent.class, event -> {
@@ -39,13 +43,12 @@ public class AntiCheatSystem {
             }
 
             // Проверка Flyhack
-            boolean isAirBelow = instance.getBlock(newPos.sub(0, 0.5, 0)).isAir();
-            boolean isAirAtLegs = instance.getBlock(newPos).isAir();
+            boolean isAirBelow = instance.getBlock(newPos.sub(0, 0.5, 0)).compare(Block.AIR);
+            boolean isAirAtLegs = instance.getBlock(newPos).compare(Block.AIR);
             
             if (isAirBelow && isAirAtLegs) {
                 if (newPos.y() >= oldPos.y() - 0.05) { 
-                    int ticks = airTicks.getOrDefault(player.getUuid(), 0) + 1;
-                    airTicks.put(player.getUuid(), ticks);
+                    int ticks = airTicks.compute(player.getUuid(), (k, cur) -> (cur == null ? 0 : cur) + 1);
 
                     if (ticks > 40) { // Игрок висит в воздухе больше ~2 секунд
                         event.setCancelled(true);
@@ -63,11 +66,10 @@ public class AntiCheatSystem {
     private static void alertAdmins(Player violator, String reason) {
         Component alert = Component.text("[AntiCheat] Подозрение на " + violator.getUsername() + ": " + reason, NamedTextColor.RED);
         for (Player p : MinecraftServer.getConnectionManager().getOnlinePlayers()) {
-            String role = RoleManager.getRole(p.getUuid());
-            if (role.equals("admin") || role.equals("moderator")) {
+            if (RoleManager.isStaff(p)) {
                 p.sendMessage(alert);
             }
         }
-        System.out.println("[AntiCheat] " + violator.getUsername() + " flagged for " + reason);
+        log.warn("[AntiCheat] {} flagged for {}", violator.getUsername(), reason);
     }
 }

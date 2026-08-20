@@ -1,0 +1,13 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/gold_nugget"
+  },
+  "overrides": [
+    { "predicate": { "custom_model_data": 1001 }, "model": "crystall:item/crystal_coin" },
+    { "predicate": { "custom_model_data": 1002 }, "model": "crystall:item/ale_mug" },
+    { "predicate": { "custom_model_data": 1003 }, "model": "crystall:item/backpack" },
+    { "predicate": { "custom_model_data": 1004 }, "model": "crystall:item/crystal_sword" },
+    { "predicate": { "custom_model_data": 1005 }, "model": "crystall:item/grappling_hook" }
+  ]
+}

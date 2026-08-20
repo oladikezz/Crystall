@@ -1,42 +1,58 @@
 package net.myserver.mechanics;
 
+import net.minestom.server.coordinate.Point;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.instance.generator.GenerationUnit;
 import net.minestom.server.instance.generator.Generator;
 import net.minestom.server.instance.generator.UnitModifier;
-
-import java.util.Random;
+import net.myserver.utils.FastNoiseLite;
+import org.jetbrains.annotations.NotNull;
 
 public class NetherGenerator implements Generator {
-    private final Random random = new Random(54321);
+    private final FastNoiseLite netherNoise;
+
+    public NetherGenerator() {
+        netherNoise = new FastNoiseLite(54321);
+        netherNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+        netherNoise.SetFrequency(0.02f);
+    }
 
     @Override
-    public void generate(GenerationUnit unit) {
+    public void generate(@NotNull GenerationUnit unit) {
         UnitModifier modifier = unit.modifier();
+        Point start = unit.absoluteStart();
+        Point end = unit.absoluteEnd();
         
-        int startY = unit.absoluteStart().blockY();
-        int endY = unit.absoluteEnd().blockY();
+        int startX = start.blockX();
+        int endX = end.blockX();
+        int startY = start.blockY();
+        int endY = end.blockY();
+        int startZ = start.blockZ();
+        int endZ = end.blockZ();
         
-        for (int x = 0; x < 16; x++) {
-            for (int z = 0; z < 16; z++) {
+        for (int x = startX; x < endX; x++) {
+            for (int z = startZ; z < endZ; z++) {
                 for (int y = startY; y < endY; y++) {
-                    if (y <= -64 || y >= 127) {
+                    if (y <= 0 || y >= 127) {
                         modifier.setBlock(x, y, z, Block.BEDROCK);
-                    } else if (y <= 31 && y > -64) {
-                        // Океан лавы
-                        if (random.nextInt(100) < 10 && y > 10) {
+                    } else if (y <= 31) {
+                        // Океан лавы на нижних уровнях
+                        float n = netherNoise.GetNoise(x, y, z);
+                        if (n > 0.2f) {
                             modifier.setBlock(x, y, z, Block.NETHERRACK);
                         } else {
                             modifier.setBlock(x, y, z, Block.LAVA);
                         }
-                    } else if (y < 127) {
-                        // Массив адского камня с "полостью" посередине
-                        if (y < 50 || y > 100) {
+                    } else {
+                        // Адский рельеф с пещерами и пустотами
+                        if (y < 45 || y > 115) {
                             modifier.setBlock(x, y, z, Block.NETHERRACK);
                         } else {
-                            // Воздушная прослойка с колоннами
-                            if (random.nextInt(100) < 5) { // 5% шанс на блок (колонны/острова)
+                            float n = netherNoise.GetNoise(x, y * 1.5f, z);
+                            if (n > 0.1f) {
                                 modifier.setBlock(x, y, z, Block.NETHERRACK);
+                            } else if (n > 0.05f && y < 60) {
+                                modifier.setBlock(x, y, z, Block.SOUL_SAND);
                             } else {
                                 modifier.setBlock(x, y, z, Block.AIR);
                             }

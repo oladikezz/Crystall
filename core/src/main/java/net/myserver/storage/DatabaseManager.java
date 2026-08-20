@@ -10,21 +10,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.util.UUID;
 
 public class DatabaseManager {
     private static final Logger log = LoggerFactory.getLogger(DatabaseManager.class);
     private static final Gson gson = new Gson();
     private static HikariDataSource dataSource;
-    private static boolean enabled = false;
+    private static volatile boolean enabled = false;
 
     public static boolean isEnabled() {
-        return enabled;
+        return enabled && dataSource != null && !dataSource.isClosed();
     }
 
     public static void init(Config config) {
         if (!config.dbEnabled) {
-            log.info("[Database] Database disabled in config, using file storage.");
+            log.info("[Database] База данных отключена в config.yml, используется локальное хранилище.");
             return;
         }
 
@@ -41,14 +40,15 @@ public class DatabaseManager {
             dataSource = new HikariDataSource(hikariConfig);
             createTables();
             enabled = true;
-            log.info("[Database] PostgreSQL connected: {}:{}/{}", config.dbHost, config.dbPort, config.dbName);
+            log.info("[Database] Подключение к PostgreSQL успешно: {}:{}/{}", config.dbHost, config.dbPort, config.dbName);
         } catch (Exception e) {
-            log.warn("[Database] Failed to connect to PostgreSQL, falling back to file storage: {}", e.getMessage());
+            log.warn("[Database] Не удалось подключиться к PostgreSQL, переключаемся на локальные файлы: {}", e.getMessage());
             enabled = false;
         }
     }
 
     private static void createTables() throws SQLException {
+        if (dataSource == null) return;
         try (Connection conn = dataSource.getConnection(); Statement stmt = conn.createStatement()) {
             stmt.execute("""
                 CREATE TABLE IF NOT EXISTS players (
@@ -78,6 +78,7 @@ public class DatabaseManager {
     }
 
     public static Connection getConnection() throws SQLException {
+        if (dataSource == null) throw new SQLException("DataSource не инициализирован.");
         return dataSource.getConnection();
     }
 
@@ -86,6 +87,7 @@ public class DatabaseManager {
     public static void savePlayerData(String uuid, String name, float health,
                                        double x, double y, double z, float yaw, float pitch,
                                        String inventoryJson) {
+        if (!isEnabled()) return;
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement("""
                 INSERT INTO players (uuid, name, health, x, y, z, yaw, pitch, inventory)
@@ -108,11 +110,12 @@ public class DatabaseManager {
             ps.setString(9, inventoryJson);
             ps.executeUpdate();
         } catch (SQLException e) {
-            log.error("[Database] Failed to save player {}: {}", uuid, e.getMessage());
+            log.error("[Database] Ошибка сохранения игрока {}: {}", uuid, e.getMessage());
         }
     }
 
     public static JsonObject loadPlayerData(String uuid) {
+        if (!isEnabled()) return null;
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement("SELECT * FROM players WHERE uuid = ?")) {
             ps.setString(1, uuid);
@@ -133,26 +136,28 @@ public class DatabaseManager {
                 return obj;
             }
         } catch (SQLException e) {
-            log.error("[Database] Failed to load player {}: {}", uuid, e.getMessage());
+            log.error("[Database] Ошибка загрузки игрока {}: {}", uuid, e.getMessage());
         }
         return null;
     }
 
-    // ========== Economy ==========
+    // ========== Atomic Economy ==========
 
     public static double getBalance(String uuid) {
+        if (!isEnabled()) return 100.0;
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement("SELECT balance FROM players WHERE uuid = ?")) {
             ps.setString(1, uuid);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) return rs.getDouble("balance");
         } catch (SQLException e) {
-            log.error("[Database] Failed to get balance for {}: {}", uuid, e.getMessage());
+            log.error("[Database] Ошибка получения баланса для {}: {}", uuid, e.getMessage());
         }
         return 100.0; // default
     }
 
     public static void setBalance(String uuid, double balance) {
+        if (!isEnabled()) return;
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(
                 "INSERT INTO players (uuid, balance) VALUES (?, ?) ON CONFLICT (uuid) DO UPDATE SET balance = EXCLUDED.balance")) {
@@ -160,14 +165,44 @@ public class DatabaseManager {
             ps.setDouble(2, balance);
             ps.executeUpdate();
         } catch (SQLException e) {
-            log.error("[Database] Failed to set balance for {}: {}", uuid, e.getMessage());
+            log.error("[Database] Ошибка установки баланса для {}: {}", uuid, e.getMessage());
+        }
+    }
+
+    public static void addBalance(String uuid, double amount) {
+        if (!isEnabled()) return;
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(
+                "INSERT INTO players (uuid, balance) VALUES (?, 100.0 + ?) ON CONFLICT (uuid) DO UPDATE SET balance = players.balance + ?")) {
+            ps.setString(1, uuid);
+            ps.setDouble(2, amount);
+            ps.setDouble(3, amount);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            log.error("[Database] Ошибка пополнения баланса для {}: {}", uuid, e.getMessage());
+        }
+    }
+
+    public static boolean removeBalance(String uuid, double amount) {
+        if (!isEnabled()) return false;
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(
+                "UPDATE players SET balance = balance - ? WHERE uuid = ? AND balance >= ?")) {
+            ps.setDouble(1, amount);
+            ps.setString(2, uuid);
+            ps.setDouble(3, amount);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            log.error("[Database] Ошибка списания баланса для {}: {}", uuid, e.getMessage());
+            return false;
         }
     }
 
     public static void shutdown() {
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
-            log.info("[Database] Connection pool closed.");
+            log.info("[Database] Пул подключений базы данных закрыт.");
         }
     }
 }

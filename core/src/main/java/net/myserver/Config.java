@@ -1,5 +1,7 @@
 package net.myserver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -8,10 +10,13 @@ import java.io.InputStream;
 import java.util.Map;
 
 public class Config {
+    private static final Logger log = LoggerFactory.getLogger(Config.class);
+
     public int port = 25565;
-    public String motd = "A Minestom Server";
+    public String motd = "A Minestom Server (Crystall Core)";
     public int maxPlayers = 100;
-    public String proxyMode = "none";
+    public String proxyMode = "none"; // "none", "velocity", "bungeecord"
+    public boolean onlineMode = false; // Mojang online-mode auth if proxyMode == "none"
     public String velocitySecret = "";
     
     // Database
@@ -26,6 +31,11 @@ public class Config {
     public String resourcePackUrl = "";
     public String resourcePackHash = "";
     public boolean resourcePackRequired = false;
+
+    // Web Map Settings
+    public boolean webMapEnabled = true;
+    public int webMapPort = 8080;
+    public boolean webMapHideCoordinates = false;
 
     public static Config load(String path) {
         Config config = new Config();
@@ -50,6 +60,9 @@ public class Config {
                 }
                 if (data.containsKey("proxy_mode")) {
                     config.proxyMode = String.valueOf(data.get("proxy_mode"));
+                }
+                if (data.containsKey("online_mode")) {
+                    config.onlineMode = Boolean.parseBoolean(String.valueOf(data.get("online_mode")));
                 }
                 if (data.containsKey("velocity_secret")) {
                     config.velocitySecret = String.valueOf(data.get("velocity_secret"));
@@ -81,9 +94,18 @@ public class Config {
                 if (data.containsKey("resource_pack_required")) {
                     config.resourcePackRequired = Boolean.parseBoolean(String.valueOf(data.get("resource_pack_required")));
                 }
+                if (data.containsKey("web_map_enabled")) {
+                    config.webMapEnabled = Boolean.parseBoolean(String.valueOf(data.get("web_map_enabled")));
+                }
+                if (data.containsKey("web_map_port")) {
+                    config.webMapPort = ((Number) data.get("web_map_port")).intValue();
+                }
+                if (data.containsKey("web_map_hide_coordinates")) {
+                    config.webMapHideCoordinates = Boolean.parseBoolean(String.valueOf(data.get("web_map_hide_coordinates")));
+                }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("[Config] Ошибка чтения конфигурации {}: {}", path, e.getMessage());
         }
 
         return config;

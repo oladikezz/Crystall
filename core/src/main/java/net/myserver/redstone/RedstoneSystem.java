@@ -20,6 +20,11 @@ public class RedstoneSystem {
         });
     }
 
+    private static String getProp(Block b, String key, String def) {
+        String val = b.getProperty(key);
+        return val != null ? val : def;
+    }
+
     public static void updateRedstoneRecursive(Instance instance, Point origin, int depth) {
         if (depth > 20) return; // Защита от бесконечного цикла
 
@@ -32,12 +37,12 @@ public class RedstoneSystem {
 
         for (Point pos : neighbors) {
             Block block = instance.getBlock(pos);
-            if (block.isAir()) continue;
+            if (block.compare(Block.AIR)) continue;
 
             // 1. Редстоун пыль
             if (block.compare(Block.REDSTONE_WIRE)) {
                 int expectedPower = calculatePower(instance, pos);
-                int currentPower = Integer.parseInt(block.getProperty("power", "0"));
+                int currentPower = Integer.parseInt(getProp(block, "power", "0"));
 
                 if (currentPower != expectedPower) {
                     instance.setBlock(pos, block.withProperty("power", String.valueOf(expectedPower)));
@@ -47,10 +52,7 @@ public class RedstoneSystem {
             
             // 2. Редстоун факел
             else if (block.compare(Block.REDSTONE_TORCH) || block.compare(Block.REDSTONE_WALL_TORCH)) {
-                boolean isLit = Boolean.parseBoolean(block.getProperty("lit", "true"));
-                
-                // Простая проверка инверсии: запитан ли блок под факелом (или за ним)
-                // Для простоты: если рядом есть пыль с power > 0, факел гаснет
+                boolean isLit = Boolean.parseBoolean(getProp(block, "lit", "true"));
                 boolean shouldBeLit = !isAnyAdjacentPowered(instance, pos);
                 
                 if (isLit != shouldBeLit) {
@@ -62,14 +64,14 @@ public class RedstoneSystem {
             // 3. Поршень
             else if (block.compare(Block.PISTON) || block.compare(Block.STICKY_PISTON)) {
                 boolean powered = isAnyAdjacentPowered(instance, pos);
-                boolean extended = Boolean.parseBoolean(block.getProperty("extended", "false"));
+                boolean extended = Boolean.parseBoolean(getProp(block, "extended", "false"));
                 
                 if (powered && !extended) {
                     // Выдвигаем
                     pushPiston(instance, pos, block);
                     updateRedstoneRecursive(instance, pos, depth + 1);
                 } else if (!powered && extended) {
-                    // Задвигаем (мгновенно убираем голову)
+                    // Задвигаем
                     retractPiston(instance, pos, block);
                     updateRedstoneRecursive(instance, pos, depth + 1);
                 }
@@ -78,7 +80,7 @@ public class RedstoneSystem {
             // 4. Двери и люки
             else if (block.name().contains("_door") || block.name().contains("_trapdoor")) {
                 boolean powered = isAnyAdjacentPowered(instance, pos);
-                boolean isOpen = Boolean.parseBoolean(block.getProperty("open", "false"));
+                boolean isOpen = Boolean.parseBoolean(getProp(block, "open", "false"));
                 
                 if (powered != isOpen) {
                     instance.setBlock(pos, block.withProperty("open", String.valueOf(powered)));
@@ -98,11 +100,11 @@ public class RedstoneSystem {
         for (Point n : neighbors) {
             Block b = instance.getBlock(n);
             if (b.name().contains("redstone_torch")) {
-                if (b.getProperty("lit", "true").equals("true")) return 15;
+                if (getProp(b, "lit", "true").equals("true")) return 15;
             } else if (b.compare(Block.REDSTONE_BLOCK)) {
                 return 15;
             } else if (b.compare(Block.REDSTONE_WIRE)) {
-                int p = Integer.parseInt(b.getProperty("power", "0"));
+                int p = Integer.parseInt(getProp(b, "power", "0"));
                 if (p - 1 > maxPower) maxPower = p - 1;
             }
         }
@@ -114,19 +116,19 @@ public class RedstoneSystem {
     }
 
     private static void pushPiston(Instance instance, Point pos, Block piston) {
-        String facing = piston.getProperty("facing", "up");
+        String facing = getProp(piston, "facing", "up");
         Vec dir = getDirection(facing);
         
         Point targetPos = pos.add(dir);
         Block targetBlock = instance.getBlock(targetPos);
         
-        if (targetBlock.isAir()) {
+        if (targetBlock.compare(Block.AIR)) {
             instance.setBlock(pos, piston.withProperty("extended", "true"));
             instance.setBlock(targetPos, Block.PISTON_HEAD.withProperty("facing", facing));
         } else if (!targetBlock.compare(Block.OBSIDIAN) && !targetBlock.compare(Block.BEDROCK)) {
             // Толкаем 1 блок
             Point nextPos = targetPos.add(dir);
-            if (instance.getBlock(nextPos).isAir()) {
+            if (instance.getBlock(nextPos).compare(Block.AIR)) {
                 instance.setBlock(nextPos, targetBlock);
                 instance.setBlock(targetPos, Block.PISTON_HEAD.withProperty("facing", facing));
                 instance.setBlock(pos, piston.withProperty("extended", "true"));
@@ -135,7 +137,7 @@ public class RedstoneSystem {
     }
 
     private static void retractPiston(Instance instance, Point pos, Block piston) {
-        String facing = piston.getProperty("facing", "up");
+        String facing = getProp(piston, "facing", "up");
         Vec dir = getDirection(facing);
         
         Point headPos = pos.add(dir);

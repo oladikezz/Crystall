@@ -6,26 +6,21 @@ import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
-import net.minestom.server.event.player.PlayerLoginEvent;
+import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.network.packet.server.play.ChangeGameStatePacket;
 import net.minestom.server.timer.TaskSchedule;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class WeatherTimeSystem {
-    private static final Random random = new Random();
-    
-    public static boolean isRaining = false;
-    public static boolean isThundering = false;
+    public static volatile boolean isRaining = false;
+    public static volatile boolean isThundering = false;
 
     public static void register(GlobalEventHandler handler, Instance instance) {
-        // Устанавливаем течение времени (1 тик времени за 1 серверный тик)
-        instance.setTimeRate(1);
-        
         // Синхронизация погоды при входе
-        handler.addListener(PlayerLoginEvent.class, event -> {
+        handler.addListener(AsyncPlayerConfigurationEvent.class, event -> {
             Player player = event.getPlayer();
             if (isRaining) {
                 player.sendPacket(new ChangeGameStatePacket(ChangeGameStatePacket.Reason.BEGIN_RAINING, 0f));
@@ -34,7 +29,7 @@ public class WeatherTimeSystem {
 
         // Смена погоды раз в 5 минут
         MinecraftServer.getSchedulerManager().buildTask(() -> {
-            int chance = random.nextInt(100);
+            int chance = ThreadLocalRandom.current().nextInt(100);
             
             if (chance < 10) {
                 setWeather(instance, true, true);
@@ -50,14 +45,14 @@ public class WeatherTimeSystem {
             if (!isThundering) return;
             
             for (Player player : instance.getPlayers()) {
-                if (random.nextInt(100) < 5) { 
-                    int offsetX = random.nextInt(30) - 15;
-                    int offsetZ = random.nextInt(30) - 15;
+                if (ThreadLocalRandom.current().nextInt(100) < 5) { 
+                    int offsetX = ThreadLocalRandom.current().nextInt(30) - 15;
+                    int offsetZ = ThreadLocalRandom.current().nextInt(30) - 15;
                     double x = player.getPosition().x() + offsetX;
                     double z = player.getPosition().z() + offsetZ;
                     
                     for (int y = 319; y > -64; y--) {
-                        if (!instance.getBlock((int)x, y, (int)z).isAir()) {
+                        if (!instance.getBlock((int)x, y, (int)z).compare(Block.AIR)) {
                             strikeLightning(instance, new Pos(x, y + 1, z));
                             break;
                         }
@@ -84,7 +79,7 @@ public class WeatherTimeSystem {
         Entity lightning = new Entity(EntityType.LIGHTNING_BOLT);
         lightning.setInstance(instance, pos);
         
-        if (instance.getBlock(pos).isAir()) {
+        if (instance.getBlock(pos).compare(Block.AIR)) {
             instance.setBlock(pos, Block.FIRE);
         }
         

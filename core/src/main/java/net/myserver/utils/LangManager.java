@@ -23,7 +23,6 @@ public class LangManager {
     private static final File LANG_DIR = new File("world_data", "lang");
     private static final Gson gson = new Gson();
     
-    // Locale string (e.g. "ru_ru") -> Map of keys to translated strings
     private static final Map<String, Map<String, String>> languages = new HashMap<>();
 
     public static void init() {
@@ -55,18 +54,18 @@ public class LangManager {
      * Supports MiniMessage formatting (e.g. <green>Hello</green>).
      */
     public static Component get(Player player, String key, Object... args) {
-        // Player's locale from their client settings (e.g. "ru_ru", "en_us")
-        String locale = player.getSettings().getLocale().toLowerCase();
+        String locale = "en_us";
+        if (player != null && player.getSettings() != null && player.getSettings().locale() != null) {
+            locale = player.getSettings().locale().toString().toLowerCase();
+        }
         
         Map<String, String> langMap = languages.get(locale);
         if (langMap == null || !langMap.containsKey(key)) {
-            // Fallback to en_us if the key or language doesn't exist
             langMap = languages.get("en_us");
         }
         
         String rawText = (langMap != null && langMap.containsKey(key)) ? langMap.get(key) : "<red>Missing translation: " + key + "</red>";
         
-        // Format with args if provided using standard String.format
         if (args.length > 0) {
             try {
                 rawText = String.format(rawText, args);
