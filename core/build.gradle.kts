@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.myserver"
-version = "1.0-SNAPSHOT"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -27,11 +27,15 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    jvmArgs("-Dfile.encoding=UTF-8")
 }
 
 tasks.jar {
+    archiveBaseName.set("crystall-core")
     manifest {
         attributes["Main-Class"] = "net.myserver.Main"
+        attributes["Implementation-Title"] = "Crystall Core"
+        attributes["Implementation-Version"] = project.version
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from({

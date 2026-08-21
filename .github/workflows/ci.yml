@@ -1,31 +1,38 @@
-name: Java CI with Gradle
+name: Crystall Core CI/CD
 
 on:
   push:
     branches: [ "main" ]
+    tags: [ "v*" ]
   pull_request:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-and-test:
+    name: Build and Release (Java 25)
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout Source Code
+      uses: actions/checkout@v4
     
-    - name: Set up JDK 21
+    - name: Set up JDK 25
       uses: actions/setup-java@v4
       with:
-        java-version: '21'
+        java-version: '25'
         distribution: 'temurin'
         
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
+    - name: Grant Execute Permissions to Gradle Wrapper
+      run: chmod +x gradlew
       
-    - name: Run Tests
-      working-directory: ./core
-      run: gradle test --no-daemon
+    - name: Run Test Suite
+      run: ./gradlew test --no-daemon
       
-    - name: Build and Package
-      working-directory: ./core
-      run: gradle installDist --no-daemon
+    - name: Build Fat Release JAR
+      run: ./gradlew jar --no-daemon
+      
+    - name: Upload Release Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: crystall-core-1.0.0
+        path: core/build/libs/crystall-core-1.0.0.jar

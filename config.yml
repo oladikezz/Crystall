@@ -1,3 +1,34 @@
+# ======================================================================
+#                   💎 Crystall Core Server Configuration
+#                      https://github.com/oladikezz/Crystall
+# ======================================================================
+
+# Сетевые параметры игрового сервера
 port: 25565
-motd: "Welcome to Crystall Server!"
 max_players: 100
+motd: "§b§lCrystall Core §8» §fUltra-High Performance 20.0 TPS Engine"
+
+# Режим авторизации и прокси
+# Варианты proxy_mode: "none" (автономный), "velocity", "bungeecord"
+proxy_mode: "none"
+online_mode: false
+velocity_secret: "your-velocity-secret-key-here"
+
+# Настройки базы данных (PostgreSQL)
+# Если db_enabled: false, сервер автоматически использует быстрое локальное хранилище world_data/
+db_enabled: false
+db_host: "localhost"
+db_port: 5432
+db_name: "crystall"
+db_user: "crystall"
+db_password: "crystall_password"
+
+# Ресурспак сервера (опционально)
+resource_pack_url: ""
+resource_pack_hash: ""
+resource_pack_required: false
+
+# Встроенная живая веб-карта мира (WebMap)
+web_map_enabled: true
+web_map_port: 8080
+web_map_hide_coordinates: false
