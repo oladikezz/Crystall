@@ -6,6 +6,7 @@ import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.entity.EntitySpawnEvent;
 import net.minestom.server.event.entity.EntityDespawnEvent;
 import net.minestom.server.instance.Instance;
+import net.myserver.engine.primitive.Long2ObjectOpenHashMap;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,11 +14,11 @@ import java.util.function.Predicate;
 
 /**
  * Высокопроизводительная пространственная сетка (Spatial Hash Grid).
- * Позволяет выполнять запросы ближайших сущностей за O(1) вместо O(N) полного перебора.
+ * Позволяет выполнять запросы ближайших сущностей за O(1) с нулевыми боксинг-аллокациями.
  */
 public class SpatialGrid {
-    // Индекс сетки: Instance -> (ChunkKey -> Set<Entity>)
-    private static final Map<Instance, Map<Long, Set<Entity>>> grid = new ConcurrentHashMap<>();
+    // Индекс сетки: Instance -> Long2ObjectOpenHashMap<Set<Entity>>
+    private static final Map<Instance, Long2ObjectOpenHashMap<Set<Entity>>> grid = new ConcurrentHashMap<>();
 
     public static void register(GlobalEventHandler handler) {
         handler.addListener(EntitySpawnEvent.class, event -> {
@@ -38,33 +39,41 @@ public class SpatialGrid {
     }
 
     public static long packChunkCoord(int chunkX, int chunkZ) {
-        return (((long) chunkX) << 32) | (chunkZ & 0xFFFFFFFFL);
+        return FastMath.packChunkPos(chunkX, chunkZ);
     }
 
     public static void addEntity(Instance instance, Entity entity, Point pos) {
         if (instance == null || entity == null || pos == null) return;
         int cx = pos.chunkX();
         int cz = pos.chunkZ();
-        long key = packChunkCoord(cx, cz);
+        long key = FastMath.packChunkPos(cx, cz);
 
-        grid.computeIfAbsent(instance, inst -> new ConcurrentHashMap<>())
-            .computeIfAbsent(key, k -> ConcurrentHashMap.newKeySet())
-            .add(entity);
+        Long2ObjectOpenHashMap<Set<Entity>> instanceGrid = grid.computeIfAbsent(instance, inst -> new Long2ObjectOpenHashMap<>(64));
+        synchronized (instanceGrid) {
+            Set<Entity> set = instanceGrid.get(key);
+            if (set == null) {
+                set = Collections.newSetFromMap(new ConcurrentHashMap<>());
+                instanceGrid.put(key, set);
+            }
+            set.add(entity);
+        }
     }
 
     public static void removeEntity(Instance instance, Entity entity, Point pos) {
         if (instance == null || entity == null || pos == null) return;
         int cx = pos.chunkX();
         int cz = pos.chunkZ();
-        long key = packChunkCoord(cx, cz);
+        long key = FastMath.packChunkPos(cx, cz);
 
-        Map<Long, Set<Entity>> instanceGrid = grid.get(instance);
+        Long2ObjectOpenHashMap<Set<Entity>> instanceGrid = grid.get(instance);
         if (instanceGrid != null) {
-            Set<Entity> set = instanceGrid.get(key);
-            if (set != null) {
-                set.remove(entity);
-                if (set.isEmpty()) {
-                    instanceGrid.remove(key, Collections.emptySet());
+            synchronized (instanceGrid) {
+                Set<Entity> set = instanceGrid.get(key);
+                if (set != null) {
+                    set.remove(entity);
+                    if (set.isEmpty()) {
+                        instanceGrid.remove(key);
+                    }
                 }
             }
         }
@@ -81,6 +90,9 @@ public class SpatialGrid {
         addEntity(instance, entity, newPos);
     }
 
+    /**
+     * Быстрый поиск всех сущностей в радиусе (в блоках).
+     */
     public static List<Entity> getEntitiesInRadius(Instance instance, Point center, double radius) {
         if (instance == null || center == null) return Collections.emptyList();
 
@@ -92,12 +104,15 @@ public class SpatialGrid {
         int minChunkZ = (int) Math.floor((center.z() - radius) / 16.0);
         int maxChunkZ = (int) Math.floor((center.z() + radius) / 16.0);
 
-        Map<Long, Set<Entity>> instanceGrid = grid.get(instance);
+        Long2ObjectOpenHashMap<Set<Entity>> instanceGrid = grid.get(instance);
         if (instanceGrid == null) return Collections.emptyList();
 
         for (int cx = minChunkX; cx <= maxChunkX; cx++) {
             for (int cz = minChunkZ; cz <= maxChunkZ; cz++) {
-                Set<Entity> entities = instanceGrid.get(packChunkCoord(cx, cz));
+                Set<Entity> entities;
+                synchronized (instanceGrid) {
+                    entities = instanceGrid.get(FastMath.packChunkPos(cx, cz));
+                }
                 if (entities != null && !entities.isEmpty()) {
                     for (Entity e : entities) {
                         if (e.getInstance() == instance && e.getPosition().distanceSquared(center) <= radiusSq) {
@@ -111,6 +126,9 @@ public class SpatialGrid {
         return result;
     }
 
+    /**
+     * Быстрый подсчет сущностей в радиусе (проверка Mob Cap).
+     */
     public static int countEntitiesInRadius(Instance instance, Point center, double radius, Predicate<Entity> filter) {
         if (instance == null || center == null) return 0;
 
@@ -122,12 +140,15 @@ public class SpatialGrid {
         int minChunkZ = (int) Math.floor((center.z() - radius) / 16.0);
         int maxChunkZ = (int) Math.floor((center.z() + radius) / 16.0);
 
-        Map<Long, Set<Entity>> instanceGrid = grid.get(instance);
+        Long2ObjectOpenHashMap<Set<Entity>> instanceGrid = grid.get(instance);
         if (instanceGrid == null) return 0;
 
         for (int cx = minChunkX; cx <= maxChunkX; cx++) {
             for (int cz = minChunkZ; cz <= maxChunkZ; cz++) {
-                Set<Entity> entities = instanceGrid.get(packChunkCoord(cx, cz));
+                Set<Entity> entities;
+                synchronized (instanceGrid) {
+                    entities = instanceGrid.get(FastMath.packChunkPos(cx, cz));
+                }
                 if (entities != null && !entities.isEmpty()) {
                     for (Entity e : entities) {
                         if (e.getInstance() == instance && (filter == null || filter.test(e))) {

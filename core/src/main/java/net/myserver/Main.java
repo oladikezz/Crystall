@@ -149,6 +149,7 @@ public class Main {
         cmdManager.register(new StopCommand());
         cmdManager.register(new BanCommand());
         cmdManager.register(new KickCommand());
+        cmdManager.register(new BenchmarkCommand());
         cmdManager.register(new StressTestRunner.StressTestCommand());
 
         // 10. Настройка MOTD & Ping

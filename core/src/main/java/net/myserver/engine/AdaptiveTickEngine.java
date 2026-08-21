@@ -6,10 +6,9 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Chunk;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.timer.TaskSchedule;
+import net.myserver.engine.primitive.Long2ObjectOpenHashMap;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -33,46 +32,52 @@ public class AdaptiveTickEngine {
     }
 
     private static final AtomicLong currentTick = new AtomicLong(0);
-    // Кэш расстояний чанков: ChunkKey -> LODZone
-    private static final Map<Long, LODZone> chunkLODCache = new ConcurrentHashMap<>();
+    // Примитивный кэш зон: ChunkKey (packed long) -> LODZone
+    private static final Long2ObjectOpenHashMap<LODZone> chunkLODCache = new Long2ObjectOpenHashMap<>(256);
 
     public static void init() {
-        // Каждую секунду обновляем матрицу LOD зон для всех чанков
         MinecraftServer.getSchedulerManager().buildTask(() -> {
-            chunkLODCache.clear();
             Collection<Player> players = MinecraftServer.getConnectionManager().getOnlinePlayers();
-            if (players.isEmpty()) return;
+            if (players.isEmpty()) {
+                synchronized (chunkLODCache) {
+                    chunkLODCache.clear();
+                }
+                return;
+            }
 
-            for (Instance instance : MinecraftServer.getInstanceManager().getInstances()) {
-                for (Chunk chunk : instance.getChunks()) {
-                    int cx = chunk.getChunkX();
-                    int cz = chunk.getChunkZ();
-                    int minDistance = Integer.MAX_VALUE;
+            synchronized (chunkLODCache) {
+                chunkLODCache.clear();
+                for (Instance instance : MinecraftServer.getInstanceManager().getInstances()) {
+                    for (Chunk chunk : instance.getChunks()) {
+                        int cx = chunk.getChunkX();
+                        int cz = chunk.getChunkZ();
+                        int minDistance = Integer.MAX_VALUE;
 
-                    for (Player player : players) {
-                        if (player.getInstance() == instance) {
-                            Point pos = player.getPosition();
-                            int pcx = pos.chunkX();
-                            int pcz = pos.chunkZ();
-                            int dist = Math.max(Math.abs(cx - pcx), Math.abs(cz - pcz)); // Чебышёвское расстояние
-                            if (dist < minDistance) {
-                                minDistance = dist;
+                        for (Player player : players) {
+                            if (player.getInstance() == instance) {
+                                Point pos = player.getPosition();
+                                int pcx = pos.chunkX();
+                                int pcz = pos.chunkZ();
+                                int dist = Math.max(Math.abs(cx - pcx), Math.abs(cz - pcz));
+                                if (dist < minDistance) {
+                                    minDistance = dist;
+                                }
                             }
                         }
-                    }
 
-                    LODZone zone;
-                    if (minDistance <= 2) {
-                        zone = LODZone.ACTIVE;
-                    } else if (minDistance <= 5) {
-                        zone = LODZone.MEDIUM;
-                    } else if (minDistance <= 10) {
-                        zone = LODZone.FAR;
-                    } else {
-                        zone = LODZone.FROZEN;
-                    }
+                        LODZone zone;
+                        if (minDistance <= 2) {
+                            zone = LODZone.ACTIVE;
+                        } else if (minDistance <= 5) {
+                            zone = LODZone.MEDIUM;
+                        } else if (minDistance <= 10) {
+                            zone = LODZone.FAR;
+                        } else {
+                            zone = LODZone.FROZEN;
+                        }
 
-                    chunkLODCache.put(SpatialGrid.packChunkCoord(cx, cz), zone);
+                        chunkLODCache.put(FastMath.packChunkPos(cx, cz), zone);
+                    }
                 }
             }
         }).repeat(TaskSchedule.tick(10)).schedule();
@@ -84,7 +89,9 @@ public class AdaptiveTickEngine {
     }
 
     public static LODZone getChunkLOD(int chunkX, int chunkZ) {
-        return chunkLODCache.getOrDefault(SpatialGrid.packChunkCoord(chunkX, chunkZ), LODZone.FROZEN);
+        synchronized (chunkLODCache) {
+            return chunkLODCache.getOrDefault(FastMath.packChunkPos(chunkX, chunkZ), LODZone.FROZEN);
+        }
     }
 
     public static boolean shouldTickChunk(int chunkX, int chunkZ) {
@@ -101,10 +108,14 @@ public class AdaptiveTickEngine {
     }
 
     public static int getActiveChunksCount() {
-        int count = 0;
-        for (LODZone z : chunkLODCache.values()) {
-            if (z != LODZone.FROZEN) count++;
+        final int[] count = {0};
+        synchronized (chunkLODCache) {
+            chunkLODCache.forEach((key, zone) -> {
+                if (zone != LODZone.FROZEN) {
+                    count[0]++;
+                }
+            });
         }
-        return count;
+        return count[0];
     }
 }

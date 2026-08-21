@@ -4,28 +4,36 @@ import net.minestom.server.instance.Chunk;
 import net.minestom.server.instance.ChunkLoader;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
+import net.myserver.engine.FastMath;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.zip.DeflaterOutputStream;
-import java.util.zip.InflaterInputStream;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 /**
  * Высокопроизводительный загрузчик чанков в формате Region Files (32x32 чанка на файл).
- * Включает палитровое сжатие (Palette-Based Encoding) и пропуск пустых воздушных секций.
+ * Включает Thread-Local пулы сжатия (Zero-GC Deflate/Inflate), палитровое сжатие и пропуск пустых секций.
  */
 public class RegionChunkLoader implements ChunkLoader {
     private static final Logger log = LoggerFactory.getLogger(RegionChunkLoader.class);
     private static final int SECTOR_HEADER_SIZE = 8192; // 1024 * 8 байт (offset: int, size: int)
-    private static final int TOTAL_SECTIONS = 24; // от Y=-64 до Y=320 (384 / 16 = 24 секции)
+    private static final int TOTAL_SECTIONS = 24;       // от Y=-64 до Y=320 (384 / 16 = 24 секции)
+    private static final int BUFFER_SIZE = 65536;       // 64 КБ буфер для сжатия
 
     private final File regionFolder;
     private final Map<Long, RegionFile> openRegions = new ConcurrentHashMap<>();
+
+    // Thread-Local компрессоры для исключения повторных аллокаций
+    private static final ThreadLocal<Deflater> deflaterPool = ThreadLocal.withInitial(() -> new Deflater(Deflater.DEFAULT_COMPRESSION));
+    private static final ThreadLocal<Inflater> inflaterPool = ThreadLocal.withInitial(Inflater::new);
+    private static final ThreadLocal<byte[]> ioBufferPool = ThreadLocal.withInitial(() -> new byte[BUFFER_SIZE]);
 
     public RegionChunkLoader(String basePath) {
         this.regionFolder = new File(basePath, "regions");
@@ -66,8 +74,7 @@ public class RegionChunkLoader implements ChunkLoader {
             return data;
         }
 
-        public synchronized void writeChunk(int index, byte[] data) throws IOException {
-            int length = data.length;
+        public synchronized void writeChunk(int index, byte[] data, int length) throws IOException {
             int offset = offsets[index];
 
             if (offset < SECTOR_HEADER_SIZE || length > lengths[index]) {
@@ -75,7 +82,7 @@ public class RegionChunkLoader implements ChunkLoader {
             }
 
             file.seek(offset);
-            file.write(data);
+            file.write(data, 0, length);
 
             offsets[index] = offset;
             lengths[index] = length;
@@ -92,7 +99,7 @@ public class RegionChunkLoader implements ChunkLoader {
     }
 
     private RegionFile getRegionFile(int regionX, int regionZ) {
-        long key = (((long) regionX) << 32) | (regionZ & 0xFFFFFFFFL);
+        long key = FastMath.packChunkPos(regionX, regionZ);
         return openRegions.computeIfAbsent(key, k -> {
             try {
                 File file = new File(regionFolder, "r." + regionX + "." + regionZ + ".dat");
@@ -119,45 +126,52 @@ public class RegionChunkLoader implements ChunkLoader {
             byte[] compressed = rf.readChunk(index);
             if (compressed == null) return null;
 
-            try (DataInputStream in = new DataInputStream(new InflaterInputStream(new ByteArrayInputStream(compressed)))) {
-                Chunk chunk = instance.getChunkSupplier().createChunk(instance, chunkX, chunkZ);
-                int sectionMask = in.readInt();
+            // Распаковка через ThreadLocal Inflater (Zero-GC)
+            Inflater inflater = inflaterPool.get();
+            inflater.reset();
+            inflater.setInput(compressed);
 
-                for (int s = 0; s < TOTAL_SECTIONS; s++) {
-                    if ((sectionMask & (1 << s)) == 0) {
-                        continue;
-                    }
+            byte[] decompressed = ioBufferPool.get();
+            int decompressedBytes = inflater.inflate(decompressed);
 
-                    int startY = -64 + (s * 16);
-                    int paletteSize = in.readInt();
-                    int[] palette = new int[paletteSize];
-                    for (int p = 0; p < paletteSize; p++) {
-                        palette[p] = in.readInt();
-                    }
+            DataInputStream in = new DataInputStream(new ByteArrayInputStream(decompressed, 0, decompressedBytes));
+            Chunk chunk = instance.getChunkSupplier().createChunk(instance, chunkX, chunkZ);
+            int sectionMask = in.readInt();
 
-                    if (paletteSize == 1) {
-                        Block b = Block.fromStateId(palette[0]);
-                        if (b != null && !b.compare(Block.AIR)) {
-                            for (int y = 0; y < 16; y++) {
-                                for (int x = 0; x < 16; x++) {
-                                    for (int z = 0; z < 16; z++) {
-                                        chunk.setBlock(x, startY + y, z, b);
-                                    }
-                                }
-                            }
-                        }
-                    } else {
+            for (int s = 0; s < TOTAL_SECTIONS; s++) {
+                if ((sectionMask & (1 << s)) == 0) {
+                    continue;
+                }
+
+                int startY = -64 + (s * 16);
+                int paletteSize = in.readInt();
+                int[] palette = new int[paletteSize];
+                for (int p = 0; p < paletteSize; p++) {
+                    palette[p] = in.readInt();
+                }
+
+                if (paletteSize == 1) {
+                    Block b = Block.fromStateId(palette[0]);
+                    if (b != null && !b.compare(Block.AIR)) {
                         for (int y = 0; y < 16; y++) {
                             for (int x = 0; x < 16; x++) {
                                 for (int z = 0; z < 16; z++) {
-                                    int paletteIdx = in.readByte() & 0xFF;
-                                    if (paletteIdx < paletteSize) {
-                                        int stateId = palette[paletteIdx];
-                                        if (stateId != 0) {
-                                            Block b = Block.fromStateId(stateId);
-                                            if (b != null) {
-                                                chunk.setBlock(x, startY + y, z, b);
-                                            }
+                                    chunk.setBlock(x, startY + y, z, b);
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    for (int y = 0; y < 16; y++) {
+                        for (int x = 0; x < 16; x++) {
+                            for (int z = 0; z < 16; z++) {
+                                int paletteIdx = in.readByte() & 0xFF;
+                                if (paletteIdx < paletteSize) {
+                                    int stateId = palette[paletteIdx];
+                                    if (stateId != 0) {
+                                        Block b = Block.fromStateId(stateId);
+                                        if (b != null) {
+                                            chunk.setBlock(x, startY + y, z, b);
                                         }
                                     }
                                 }
@@ -165,8 +179,8 @@ public class RegionChunkLoader implements ChunkLoader {
                         }
                     }
                 }
-                return chunk;
             }
+            return chunk;
         } catch (Exception e) {
             log.error("[RegionChunkLoader] Ошибка десериализации чанка ({}, {}): {}", chunkX, chunkZ, e.getMessage());
             return null;
@@ -187,66 +201,78 @@ public class RegionChunkLoader implements ChunkLoader {
         if (rf == null) return;
 
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
-            try (DataOutputStream out = new DataOutputStream(new DeflaterOutputStream(baos))) {
-                int sectionMask = 0;
+            byte[] rawBuffer = ioBufferPool.get();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream(rawBuffer.length);
+            DataOutputStream out = new DataOutputStream(baos);
 
-                for (int s = 0; s < TOTAL_SECTIONS; s++) {
-                    int startY = -64 + (s * 16);
-                    boolean hasBlocks = false;
-                    for (int y = 0; y < 16 && !hasBlocks; y++) {
-                        for (int x = 0; x < 16 && !hasBlocks; x++) {
-                            for (int z = 0; z < 16 && !hasBlocks; z++) {
-                                if (!chunk.getBlock(x, startY + y, z).compare(Block.AIR)) {
-                                    hasBlocks = true;
-                                }
+            int sectionMask = 0;
+
+            for (int s = 0; s < TOTAL_SECTIONS; s++) {
+                int startY = -64 + (s * 16);
+                boolean hasBlocks = false;
+                for (int y = 0; y < 16 && !hasBlocks; y++) {
+                    for (int x = 0; x < 16 && !hasBlocks; x++) {
+                        for (int z = 0; z < 16 && !hasBlocks; z++) {
+                            if (!chunk.getBlock(x, startY + y, z).compare(Block.AIR)) {
+                                hasBlocks = true;
                             }
                         }
                     }
-                    if (hasBlocks) {
-                        sectionMask |= (1 << s);
+                }
+                if (hasBlocks) {
+                    sectionMask |= (1 << s);
+                }
+            }
+
+            out.writeInt(sectionMask);
+
+            for (int s = 0; s < TOTAL_SECTIONS; s++) {
+                if ((sectionMask & (1 << s)) == 0) continue;
+
+                int startY = -64 + (s * 16);
+                Map<Integer, Integer> paletteMap = new LinkedHashMap<>();
+                List<Integer> paletteList = new ArrayList<>();
+                int[] blockStates = new int[4096];
+
+                int idx = 0;
+                for (int y = 0; y < 16; y++) {
+                    for (int x = 0; x < 16; x++) {
+                        for (int z = 0; z < 16; z++) {
+                            int stateId = chunk.getBlock(x, startY + y, z).stateId();
+                            blockStates[idx++] = stateId;
+                            if (!paletteMap.containsKey(stateId)) {
+                                paletteMap.put(stateId, paletteList.size());
+                                paletteList.add(stateId);
+                            }
+                        }
                     }
                 }
 
-                out.writeInt(sectionMask);
+                out.writeInt(paletteList.size());
+                for (int sid : paletteList) {
+                    out.writeInt(sid);
+                }
 
-                for (int s = 0; s < TOTAL_SECTIONS; s++) {
-                    if ((sectionMask & (1 << s)) == 0) continue;
-
-                    int startY = -64 + (s * 16);
-                    Map<Integer, Integer> paletteMap = new LinkedHashMap<>();
-                    List<Integer> paletteList = new ArrayList<>();
-                    int[] blockStates = new int[4096];
-
-                    int idx = 0;
-                    for (int y = 0; y < 16; y++) {
-                        for (int x = 0; x < 16; x++) {
-                            for (int z = 0; z < 16; z++) {
-                                int stateId = chunk.getBlock(x, startY + y, z).stateId();
-                                blockStates[idx++] = stateId;
-                                if (!paletteMap.containsKey(stateId)) {
-                                    paletteMap.put(stateId, paletteList.size());
-                                    paletteList.add(stateId);
-                                }
-                            }
-                        }
-                    }
-
-                    out.writeInt(paletteList.size());
-                    for (int sid : paletteList) {
-                        out.writeInt(sid);
-                    }
-
-                    if (paletteList.size() > 1) {
-                        for (int i = 0; i < 4096; i++) {
-                            int pIdx = paletteMap.get(blockStates[i]);
-                            out.writeByte(pIdx);
-                        }
+                if (paletteList.size() > 1) {
+                    for (int i = 0; i < 4096; i++) {
+                        int pIdx = paletteMap.get(blockStates[i]);
+                        out.writeByte(pIdx);
                     }
                 }
             }
 
-            rf.writeChunk(index, baos.toByteArray());
+            byte[] uncompressed = baos.toByteArray();
+
+            // Сжатие через ThreadLocal Deflater
+            Deflater deflater = deflaterPool.get();
+            deflater.reset();
+            deflater.setInput(uncompressed);
+            deflater.finish();
+
+            byte[] compressedBuffer = new byte[uncompressed.length + 64];
+            int compressedSize = deflater.deflate(compressedBuffer);
+
+            rf.writeChunk(index, compressedBuffer, compressedSize);
         } catch (Exception e) {
             log.error("[RegionChunkLoader] Ошибка сохранения чанка ({}, {}): {}", chunkX, chunkZ, e.getMessage());
         }

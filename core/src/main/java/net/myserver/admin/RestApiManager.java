@@ -9,8 +9,10 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Instance;
 import net.myserver.engine.AdaptiveTickEngine;
 import net.myserver.engine.DynamicViewDistance;
+import net.myserver.engine.FastMath;
 import net.myserver.engine.PerformanceMonitor;
 import net.myserver.network.StressTestRunner;
+import net.myserver.utils.FastNoiseLite;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -55,6 +57,35 @@ public class RestApiManager {
                 perf.addProperty("heapMaxMb", PerformanceMonitor.getMaxMemoryMb());
 
                 sendJsonResponse(exchange, perf);
+            });
+
+            // API микробенчмарка
+            server.createContext("/api/benchmark", exchange -> {
+                long startStd = System.nanoTime();
+                double s1 = 0;
+                for (int i = 0; i < 500_000; i++) s1 += Math.sin(i * 0.001);
+                long stdNs = System.nanoTime() - startStd;
+
+                long startFast = System.nanoTime();
+                float s2 = 0;
+                for (int i = 0; i < 500_000; i++) s2 += FastMath.sin(i * 0.001f);
+                long fastNs = System.nanoTime() - startFast;
+
+                FastNoiseLite noise = new FastNoiseLite(1337);
+                long startNoise = System.nanoTime();
+                for (int x = 0; x < 50; x++) {
+                    for (int z = 0; z < 50; z++) {
+                        noise.GetNoise(x, 64, z);
+                    }
+                }
+                long noiseNs = System.nanoTime() - startNoise;
+
+                JsonObject b = new JsonObject();
+                b.addProperty("stdMathMs", stdNs / 1_000_000.0);
+                b.addProperty("fastMathMs", fastNs / 1_000_000.0);
+                b.addProperty("mathSpeedup", String.format("%.2fx", (double) stdNs / Math.max(1, fastNs)));
+                b.addProperty("noiseGen2500BlocksMs", noiseNs / 1_000_000.0);
+                sendJsonResponse(exchange, b);
             });
 
             // Управление стресс-тестом
