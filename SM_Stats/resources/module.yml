@@ -1,0 +1,5 @@
+name: SM_Stats
+version: 1.0.0
+author: MeXaNoBoP
+description: Статистика игроков
+main: net.schalker.SMPS.modules.stats.StatsModule

@@ -1,0 +1,5 @@
+name: SM_Crowns
+version: 1.0.0
+author: MeXaNoBoP
+description: Короны над именами игроков по группам LuckPerms
+main: net.schalker.SMPS.modules.crowns.CrownsModule

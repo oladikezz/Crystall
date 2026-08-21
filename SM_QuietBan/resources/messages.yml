@@ -1,0 +1,25 @@
+not-ready: "&[SECONDARY]Модуль ещё не готов, попробуйте позже."
+
+usage-ban: "&[SECONDARY]Использование: &[MAIN]/quietban <ник> <quiet|medium|aggressive> <yes|no> [время] [причина]"
+usage-unban: "&[SECONDARY]Использование: &[MAIN]/unquietban <ник> [причина]"
+usage-check: "&[SECONDARY]Использование: &[MAIN]/checkquietban <ник>"
+
+invalid-level: "&[SECONDARY]Неизвестный тип. Доступно: &[MAIN]quiet&[SECONDARY], &[MAIN]medium&[SECONDARY], &[MAIN]aggressive&[SECONDARY]."
+invalid-iplock: "&[SECONDARY]Третий аргумент должен быть &[MAIN]yes &[SECONDARY]или &[MAIN]no&[SECONDARY]."
+invalid-time: "&[SECONDARY]Неверный формат времени. Примеры: &[MAIN]30s&[SECONDARY], &[MAIN]15m&[SECONDARY], &[MAIN]2h&[SECONDARY], &[MAIN]7d&[SECONDARY]."
+target-immune: "&[SECONDARY]На этого игрока нельзя выдать теневой бан."
+
+ban-done: "&[SECONDARY]Теневой бан выдан игроку &[MAIN]{player}&[SECONDARY]. Тип: &[MAIN]{level}&[SECONDARY], IP-привязка: &[MAIN]{ip}&[SECONDARY], срок: &[MAIN]{time}&[SECONDARY]."
+applied-now: "&[SECONDARY]Эффект применён сразу."
+applied-later: "&[SECONDARY]Эффект применится при следующем входе."
+
+unban-done: "&[SECONDARY]Теневой бан снят с игрока &[MAIN]{player}&[SECONDARY]. Записей снято: &[MAIN]{count}&[SECONDARY]."
+no-ban: "&[SECONDARY]У игрока &[MAIN]{player} &[SECONDARY]нет активного теневого бана."
+
+check-header: "&[MAIN]Теневой бан: &[SECONDARY]{player}"
+check-level: "&[SECONDARY]Тип: &[MAIN]{level}"
+check-ip: "&[SECONDARY]IP-привязка: &[MAIN]{lock} &[SECONDARY]({ip})"
+check-time: "&[SECONDARY]Осталось: &[MAIN]{time}"
+check-issued: "&[SECONDARY]Выдал: &[MAIN]{issuer} &[SECONDARY]({date})"
+check-source: "&[SECONDARY]Источник: &[MAIN]{source}"
+check-reason: "&[SECONDARY]Причина: &[MAIN]{reason}"

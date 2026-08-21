@@ -1,0 +1,7 @@
+name: SM_AdminList
+version: 1.1.0
+author: 'MeXaNoBoP, @deforce_'
+description: 'Отправка списка админов онлайн в Discord webhook'
+main: net.schalker.SMPS.modules.adminlist.AdminListModule
+softdepend:
+  - LuckPerms

@@ -1,0 +1,5 @@
+name: SM_Flags
+version: 1.2.0
+author: 'MeXaNoBoP & @deforce_'
+description: 'Система отслеживания подозрительных действий пользователей'
+main: net.schalker.SMPS.modules.flags.FlagsModule

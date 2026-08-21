@@ -1,0 +1,26 @@
+usage: "&[SECONDARY]Использование: &[MAIN]/trollitem <bow|handcuffs|bomb> [ник]"
+player-not-found: "&[SECONDARY]Игрок &[MAIN]{player}&[SECONDARY] не найден!"
+console-needs-target: "&[SECONDARY]Консоль должна указать ник игрока: /trollitem <тип> <ник>"
+
+given-self-bow: "&[SECONDARY]Вы получили лук &[MAIN]Хуюк&[SECONDARY]!"
+given-other-bow: "&[SECONDARY]Игрок &[MAIN]{player}&[SECONDARY] получил лук &[MAIN]Хуюк&[SECONDARY]!"
+received-bow: "&[SECONDARY]Вам выдали лук &[MAIN]Хуюк&[SECONDARY]!"
+
+given-self-handcuffs: "&[SECONDARY]Вы получили палочку &[MAIN]Наручники&[SECONDARY]!"
+given-other-handcuffs: "&[SECONDARY]Игрок &[MAIN]{player}&[SECONDARY] получил палочку &[MAIN]Наручники&[SECONDARY]!"
+received-handcuffs: "&[SECONDARY]Вам выдали палочку &[MAIN]Наручники&[SECONDARY]!"
+
+given-self-bomb: "&[SECONDARY]Вы получили &[MAIN]Гравитационную бомбу&[SECONDARY]!"
+given-other-bomb: "&[SECONDARY]Игрок &[MAIN]{player}&[SECONDARY] получил &[MAIN]Гравитационную бомбу&[SECONDARY]!"
+received-bomb: "&[SECONDARY]Вам выдали &[MAIN]Гравитационную бомбу&[SECONDARY]!"
+
+selected-first: "&[SECONDARY]Выбран первый игрок: &[MAIN]{player}&[SECONDARY]. Ударьте второго, чтобы сковать."
+selection-cancelled: "&[SECONDARY]Выбор сброшен."
+first-target-offline: "&[SECONDARY]Первый выбранный игрок вышел из игры, выбор сброшен."
+already-cuffed: "&[SECONDARY]Игрок &[MAIN]{player}&[SECONDARY] уже скован с кем-то другим!"
+not-tail: "&[SECONDARY]У игрока &[MAIN]{player}&[SECONDARY] уже есть привязанный сзади — ударьте последнего в цепочке!"
+too-far: "&[SECONDARY]Игроки должны быть рядом друг с другом, чтобы их сковать!"
+cuffed: "&[SECONDARY]Игроки &[MAIN]{player1}&[SECONDARY] и &[MAIN]{player2}&[SECONDARY] скованы наручниками!"
+uncuffed: "&[SECONDARY]Цепочка с игроком &[MAIN]{player}&[SECONDARY] разорвана."
+
+on-cooldown: "&[SECONDARY]Бомба перезаряжается, подождите ещё &[MAIN]{seconds}&[SECONDARY] сек."

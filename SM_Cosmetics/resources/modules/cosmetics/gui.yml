@@ -1,0 +1,138 @@
+﻿menu:
+  title: "&8Cosmetics"
+  category-title: "&8{category}"
+  labels:
+    hit_suffix: "(on hit)"
+    trail_suffix: "(trail)"
+
+categories:
+  pet: "Pets"
+  particle_effect: "Particles"
+  death_effect: "Death Effects"
+  arrow_effect: "Arrow Effects"
+  balloon: "Balloons"
+  emote: "Emotes"
+  morph: "Morphs"
+  mount: "Mounts"
+  gadget: "Gadgets"
+  status: "Statuses"
+  banner: "Banners"
+  music: "Music"
+  weapon_bow: "Bow Effects"
+  weapon_mace: "Mace Effects"
+  weapon_trident: "Trident Effects"
+
+balloons:
+  groups:
+    special_rainbow: "Rainbow Wool"
+    special_ender: "Ender Balloons"
+    special_ghast: "Ghast Balloons"
+    special_happyghast: "Happy Ghast Balloons"
+    type_wool: "Wool Balloons"
+    type_glass: "Glass Balloons"
+    type_block: "Block Balloons"
+    default: "Balloons"
+
+settings:
+  mode:
+    all: "show to everyone"
+    self_only: "only to yourself"
+    others_only: "only to others"
+    none: "show to nobody"
+  menu:
+    title: "&8Cosmetics Settings"
+    header:
+      name: "&eSettings"
+      lore:
+        - "&7Configure cosmetic visibility and behavior"
+    others:
+      name: "&eShow Others' Effects"
+      lore: "&7Toggle visibility of other players' effects"
+    mine:
+      name: "&eShow My Effects"
+      lore: "&7Allow others to see your effects"
+    silent:
+      name: "&eSilent Mode"
+      lore: "&7Disable cosmetic sounds"
+    categories:
+      name: "&6Category Visibility"
+      lore: "&7Toggle visibility per category"
+    category-mode-prefix: "&7Mode: "
+    category-toggle-hint: "&7Click to switch"
+    enable-all: "&aEnable All"
+    disable-all: "&cDisable All"
+    back: "&cBack"
+
+weapon-effects:
+  menu:
+    title: "&8Weapon Effects"
+    open: "&7Click to open"
+    back: "&cBack"
+    select:
+      name: "&6Select Effect"
+    none:
+      name: "&cNone"
+      selected-name: "&aNone"
+      lore: "&7Click to clear the effect"
+      selected-lore: "&aEquipped"
+    bow:
+      name: "&6Bow Effects"
+      lore: "&7Arrow flight and hit visuals"
+      title: "&8Bow Effects"
+    mace:
+      name: "&6Mace Effects"
+      lore: "&7Visual effects for mace hits"
+      title: "&8Mace Effects"
+    trident:
+      name: "&6Trident Effects"
+      lore: "&7Separate throw and riptide visuals"
+      title: "&8Trident Effects"
+      throw:
+        name: "&bThrow Effects"
+        lore: "&7Trail and hit when thrown"
+        title: "&8Trident Throw Effects"
+      riptide:
+        name: "&bRiptide Trails"
+        lore: "&7Trail behind you while flying"
+        title: "&8Riptide Trails"
+  fallback:
+    bow: "{name}"
+    mace: "{name}"
+    trident_throw: "{name}"
+    trident_riptide: "{name}"
+    default: "{name}"
+  names:
+    # bow_explosion: "Explosive Shot"
+    # mace_lightning: "Lightning Impact"
+    # trident_throw_water: "Water Trail"
+
+ui:
+  templates:
+    available: "&fAvailable: &b{count}"
+    total: "&fTotal: &b{count}"
+    equipped: "&fEquipped: &a{name}"
+    equipped-none: "&fEquipped: &7None"
+    page: "&fPage {current}/{total}"
+    remove-named: "&7Remove {name}"
+    available-variants: "&fAvailable variants: &b{count}"
+    variants: "&7Variants: &b{count}"
+    unlocked: "&7Unlocked: &a{count}"
+  buttons:
+    unequip: "&cUnequip"
+  text-overrides-exact:
+    "Close": "&cClose"
+    "Back": "&cBack"
+    "Settings": "&eSettings"
+    "Unequip All": "&cUnequip All"
+    "Previous Page": "&ePrevious Page"
+    "Next Page": "&eNext Page"
+    "Enable All": "&aEnable All"
+    "Disable All": "&cDisable All"
+    "Silent Mode": "&eSilent Mode"
+    "Show Others' Effects": "&eShow Others' Effects"
+    "Show My Effects": "&eShow My Effects"
+    "Category Visibility": "&6Category Visibility"
+  text-overrides:
+    # close: "&cClose"
+    # back: "&cBack"
+    # hash_5a8e7f21: "&6My Text"

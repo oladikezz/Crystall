@@ -1,0 +1,27 @@
+commands:
+  stats:
+    enabled: true
+  statsadmin:
+    enabled: true
+
+settings:
+  save-interval-seconds: 120
+  top-limit: 10
+  move-interval-ms: 500
+
+import-scan:
+  enabled: true
+  batch-size: 3
+  tick-interval: 20
+
+track:
+  playtime: true
+  deaths: true
+  player-kills: true
+  mob-kills: true
+  blocks-broken: true
+  blocks-placed: true
+  items-crafted: true
+  distance: true
+  chat-messages: true
+  achievements: true

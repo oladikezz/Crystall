@@ -1,0 +1,90 @@
+# Checker deny effects configuration
+deny-effect: "default" # default | random | scale | rocket | smile | cage | storm | chain | laser | blackhole | ring | freeze | portal | thorns | pulse
+deny-drop-items: true
+
+scale-effect:
+  min: 1
+  max: 10
+  duration-ticks: 40
+
+rocket-effect:
+  height: 8
+  duration-ticks: 40
+  interval-ticks: 2
+  radius: 1.5
+  smoke-count: 12
+
+smile-effect:
+  duration-ticks: 40
+  start-offset: 3.0
+  y-offset: 1.0
+  cube-size: 0.6
+  particle-count: 25
+  material: "BLACK_CONCRETE"
+
+cage-effect:
+  duration-ticks: 40
+  start-offset: 3.0
+  end-offset: 1.0
+  height: 2.5
+  step: 0.5
+  material: "IRON_BARS"
+
+storm-effect:
+  duration-ticks: 60
+  radius: 1.6
+  height: 3.0
+  particles: 12
+
+chain-effect:
+  duration-ticks: 30
+  start-distance: 3.5
+  points: 6
+
+laser-effect:
+  duration-ticks: 20
+  height: 8.0
+  points: 16
+
+blackhole-effect:
+  duration-ticks: 40
+  start-radius: 2.5
+  end-radius: 0.2
+  particles: 16
+
+ring-effect:
+  duration-ticks: 40
+  red-duration-ticks: 10
+  rings: 3
+  start-radius: 2.5
+  end-radius: 0.2
+  points: 24
+  scatter-count: 80
+  scatter-offset: 1.2
+  scatter-speed: 0.25
+  after-ban-ticks: 20
+  after-ban-radius: 1.0
+  after-ban-points: 24
+
+freeze-effect:
+  duration-ticks: 30
+  radius: 1.5
+  particles: 20
+
+portal-effect:
+  duration-ticks: 30
+  radius: 1.5
+  particles: 30
+
+thorns-effect:
+  duration-ticks: 25
+  radius: 1.5
+  points: 16
+  material: "CRIMSON_STEM"
+
+pulse-effect:
+  pulses: 3
+  interval-ticks: 10
+  start-radius: 0.6
+  end-radius: 2.8
+  points: 24

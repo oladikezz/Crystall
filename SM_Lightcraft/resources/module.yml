@@ -1,0 +1,5 @@
+name: SM_Lightcraft
+version: 2.1.0
+author: MeXaNoBoP
+description: Крафт и управление световыми блоками через камнерез
+main: net.schalker.SMPS.modules.lightcraft.LightCraftModule

@@ -1,0 +1,282 @@
+enabled: true
+
+cosmetics:
+  spark_arrow:
+    enabled: true
+    name: "Spark Arrow"
+    item: "minecraft:arrow"
+    trail_particle: "CRIT"
+    hit_particle: "FIREWORK"
+    trail_count: 2
+    hit_count: 20
+    hit_spread: 0.5
+    trail_sound: "entity.arrow.hit_player"
+    hit_sound: "entity.firework_rocket.blast"
+
+  soul_arrow:
+    enabled: true
+    name: "Soul Arrow"
+    item: "minecraft:spectral_arrow"
+    trail_particle: "SOUL_FIRE_FLAME"
+    hit_particle: "SOUL"
+    trail_count: 2
+    hit_count: 24
+    hit_spread: 0.45
+    trail_sound: "entity.blaze.shoot"
+    hit_sound: "block.soul_sand.place"
+
+  storm_arrow:
+    enabled: true
+    name: "Storm Arrow"
+    item: "minecraft:trident"
+    trail_particle: "ELECTRIC_SPARK"
+    hit_particle: "END_ROD"
+    trail_count: 4
+    hit_count: 28
+    hit_spread: 0.6
+    trail_sound: "entity.lightning_bolt.thunder"
+    hit_sound: "entity.lightning_bolt.impact"
+
+  blossom_arrow:
+    enabled: true
+    name: "Blossom Arrow"
+    item: "minecraft:cherry_leaves"
+    trail_particle: "CHERRY_LEAVES"
+    hit_particle: "CHERRY_LEAVES"
+    trail_count: 3
+    hit_count: 30
+    hit_spread: 0.7
+    trail_sound: "block.cherry_leaves.fall"
+    hit_sound: "entity.player.levelup"
+
+  arcane_arrow:
+    enabled: true
+    name: "Arcane Arrow"
+    item: "minecraft:amethyst_shard"
+    trail_particle: "ENCHANT"
+    hit_particle: "ENCHANT"
+    trail_count: 6
+    hit_count: 40
+    hit_spread: 0.65
+    trail_sound: "block.amethyst_block.hit"
+    hit_sound: "entity.evoker.cast_spell"
+
+  nether_arrow:
+    enabled: true
+    name: "Nether Arrow"
+    item: "minecraft:blaze_powder"
+    trail_particle: "FLAME"
+    hit_particle: "LAVA"
+    trail_count: 3
+    hit_count: 18
+    hit_spread: 0.4
+    trail_sound: "entity.blaze.shoot"
+    hit_sound: "block.lava.extinguish"
+
+  bow_spark:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Bow Spark"
+    item: "minecraft:bow"
+    trail_particle: "CRIT"
+    hit_particle: "FIREWORK"
+    trail_count: 2
+    hit_count: 20
+    hit_spread: 0.5
+    trail_sound: "entity.arrow.shoot"
+    hit_sound: "entity.firework_rocket.blast"
+
+  bow_soul:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Bow Soul"
+    item: "minecraft:bow"
+    trail_particle: "SOUL_FIRE_FLAME"
+    hit_particle: "SOUL"
+    trail_count: 3
+    hit_count: 28
+    hit_spread: 0.55
+    trail_sound: "entity.blaze.shoot"
+    hit_sound: "block.soul_sand.place"
+
+  bow_arcane:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Bow Arcane"
+    item: "minecraft:bow"
+    trail_particle: "ENCHANT"
+    hit_particle: "ENCHANT"
+    trail_count: 5
+    hit_count: 36
+    hit_spread: 0.65
+    trail_sound: "block.amethyst_block.hit"
+    hit_sound: "entity.evoker.cast_spell"
+
+  bow_frost:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Bow Frost"
+    item: "minecraft:packed_ice"
+    trail_particle: "SNOWFLAKE"
+    hit_particle: "SNOWFLAKE"
+    trail_count: 4
+    hit_count: 30
+    hit_spread: 0.6
+    trail_sound: "block.amethyst_cluster.break"
+    hit_sound: "block.glass.break"
+
+  bow_celestial:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Bow Celestial"
+    item: "minecraft:echo_shard"
+    trail_particle: "END_ROD"
+    hit_particle: "END_ROD"
+    trail_count: 5
+    hit_count: 34
+    hit_spread: 0.7
+    trail_sound: "entity.phantom.flap"
+    hit_sound: "entity.illusioner.cast_spell"
+
+  bow_venom:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Bow Venom"
+    item: "minecraft:spider_eye"
+    trail_particle: "WITCH"
+    hit_particle: "SNEEZE"
+    trail_count: 4
+    hit_count: 26
+    hit_spread: 0.6
+    trail_sound: "entity.spider.ambient"
+    hit_sound: "entity.witch.throw"
+
+  bow_phantom:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Bow Phantom"
+    item: "minecraft:phantom_membrane"
+    trail_particle: "SMOKE"
+    hit_particle: "SOUL"
+    trail_count: 5
+    hit_count: 32
+    hit_spread: 0.7
+    trail_sound: "entity.phantom.flap"
+    hit_sound: "entity.phantom.hurt"
+
+  bow_solar:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Bow Solar"
+    item: "minecraft:golden_apple"
+    trail_particle: "FLAME"
+    hit_particle: "GLOW"
+    trail_count: 6
+    hit_count: 36
+    hit_spread: 0.75
+    trail_sound: "item.firecharge.use"
+    hit_sound: "entity.blaze.shoot"
+
+  bow_nebula:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Bow Nebula"
+    item: "minecraft:echo_shard"
+    trail_particle: "REVERSE_PORTAL"
+    hit_particle: "ENCHANT"
+    trail_count: 7
+    hit_count: 44
+    hit_spread: 0.8
+    trail_sound: "block.portal.ambient"
+    hit_sound: "entity.ender_dragon.flap"
+
+  bow_toxic_cloud:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Bow Toxic Cloud"
+    item: "minecraft:fermented_spider_eye"
+    trail_particle: "WITCH"
+    hit_particle: "SMOKE"
+    trail_count: 5
+    hit_count: 30
+    hit_spread: 0.7
+    trail_sound: "entity.witch.ambient"
+    hit_sound: "entity.witch.throw"
+
+  bow_crystal_lance:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Bow Crystal Lance"
+    item: "minecraft:amethyst_cluster"
+    trail_particle: "END_ROD"
+    hit_particle: "GLOW"
+    trail_count: 6
+    hit_count: 38
+    hit_spread: 0.75
+    trail_sound: "block.amethyst_block.chime"
+    hit_sound: "block.beacon.activate"
+
+  bow_ashen:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Bow Ashen"
+    item: "minecraft:charcoal"
+    trail_particle: "SMOKE"
+    hit_particle: "CLOUD"
+    trail_count: 4
+    hit_count: 26
+    hit_spread: 0.65
+    trail_sound: "block.fire.extinguish"
+    hit_sound: "entity.player.attack.weak"
+
+  bow_fairy:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Bow Fairy"
+    item: "minecraft:glow_berries"
+    trail_particle: "END_ROD"
+    hit_particle: "CHERRY_LEAVES"
+    trail_count: 6
+    hit_count: 34
+    hit_spread: 0.72
+    trail_sound: "entity.allay.ambient_with_item"
+    hit_sound: "entity.player.levelup"
+
+  bow_abyss:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Bow Abyss"
+    item: "minecraft:crying_obsidian"
+    trail_particle: "GLOW_SQUID_INK"
+    hit_particle: "REVERSE_PORTAL"
+    trail_count: 7
+    hit_count: 42
+    hit_spread: 0.8
+    trail_sound: "entity.glow_squid.squirt"
+    hit_sound: "block.respawn_anchor.deplete"
+
+  bow_starlight:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Bow Starlight"
+    item: "minecraft:nether_star"
+    trail_particle: "END_ROD"
+    hit_particle: "FIREWORK"
+    trail_count: 6
+    hit_count: 40
+    hit_spread: 0.78
+    trail_sound: "entity.firework_rocket.twinkle"
+    hit_sound: "entity.firework_rocket.large_blast"
+
+  bow_monsoon:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Bow Monsoon"
+    item: "minecraft:water_bucket"
+    trail_particle: "SPLASH"
+    hit_particle: "BUBBLE"
+    trail_count: 5
+    hit_count: 30
+    hit_spread: 0.7
+    trail_sound: "entity.dolphin.splash"
+    hit_sound: "entity.player.splash"

@@ -1,0 +1,5 @@
+name: SM_ItemDespawn
+version: 1.0.0
+author: MeXaNoBoP
+description: 'Ускоряет исчезновение выбранных предметов на земле'
+main: net.schalker.SMPS.modules.itemdespawn.ItemDespawnModule

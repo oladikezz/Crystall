@@ -1,0 +1,5 @@
+name: SM_Checker
+version: 2.1.0
+author: 'MeXaNoBoP & @deforce_'
+description: 'Проверка игроков на читы'
+main: net.schalker.SMPS.modules.checker.CheckerModule

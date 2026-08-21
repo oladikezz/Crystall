@@ -1,0 +1,32 @@
+﻿# Essentials module configuration
+settings:
+  ext:
+    max-radius: 16
+
+commands:
+  tphere:
+    enabled: true
+  gm:
+    enabled: true
+  heal:
+    enabled: true
+  feed:
+    enabled: true
+  fix:
+    enabled: true
+  back:
+    enabled: true
+  god:
+    enabled: true
+  fly:
+    enabled: true
+
+  speed:
+    enabled: true
+
+  ext:
+    enabled: true
+
+  freeze:
+    enabled: true
+

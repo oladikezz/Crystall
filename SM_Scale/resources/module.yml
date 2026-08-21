@@ -1,0 +1,16 @@
+name: 'SM_Scale'
+version: 1.0.0
+author: '@deforce_'
+description: 'Player scaling with animation'
+main: net.schalker.SMPS.modules.scale.ScaleModule
+permissions:
+  smscale.basic:
+    description: Access to basic scaling range (0.7-1.3)
+    default: true
+  smscale.advanced:
+    description: Access to advanced scaling range (0.5-2)
+    default: false
+  smscale.admin:
+    description: Admin access to scale commands
+    default: op
+

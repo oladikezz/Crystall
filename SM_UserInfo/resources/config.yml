@@ -1,0 +1,5 @@
+nickname-reveal:
+  enabled: true
+  permission: ""
+  cooldown-ms: 500
+  format: "&[SECONDARY]Ник: &[MAIN]{player}"

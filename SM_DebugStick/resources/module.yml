@@ -1,0 +1,6 @@
+name: SM_DebugStick
+version: 1.0.1
+author: '@deforce_'
+description: 'Craftable Debug Stick. Thats it'
+main: net.schalker.SMPS.modules.debugstick.DebugStickModule
+

@@ -1,0 +1,5 @@
+name: SM_UserInfo
+version: 2.1.0
+author: ivan4
+description: Аккуратный поиск данных игрока по таблицам БД (лимит вывода 10)
+main: net.schalker.SMPS.modules.userinfo.UserinfoModule

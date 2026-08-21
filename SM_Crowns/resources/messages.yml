@@ -1,0 +1,4 @@
+# ======== SM_Crowns - Сообщения ========
+no-permission: "&[SECONDARY]У вас нет прав для этого."
+reload-done: "&[MAIN]Конфигурация &[SECONDARY]SM_Crowns &[MAIN]перезагружена."
+usage: "&[SECONDARY]Использование: &f/crowns reload"

@@ -1,21 +1,47 @@
-# Gradle
-.gradle/
-build/
-**/build/
-!gradle/wrapper/gradle-wrapper.jar
-
 # IDE
 .idea/
-*.iws
 *.iml
-*.ipr
-out/
 .vscode/
 
-# Runtime / Server Data
+# Gradle cache and build output
+.gradle/
+**/build/
+build/
+bin/
+out/
+!SM_Watcher/build/
+!SM_Watcher/build/libs/
+!SM_Watcher/build/libs/*.jar
+SM_Watcher/build/classes/
+SM_Watcher/build/tmp/
+SM_Watcher/build/resources/
+
+# Server Runtime Data
 world_data/
 backups/
 logs/
 plugins/
 node_modules/
 **/node_modules/
+
+# Gradle wrapper committed at root only — ignore stray copies in submodules
+**/gradle/
+!gradle/
+**/gradlew
+!gradlew
+**/gradlew.bat
+!gradlew.bat
+
+# Compiled Java
+*.class
+
+# Release/output JARs (not dependency JARs)
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+!libs/*.jar
+!SM_Watcher/**/*.jar
+!SM_Watcher/*.jar
+
+# OS junk
+.DS_Store
+Thumbs.db

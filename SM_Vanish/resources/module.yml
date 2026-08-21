@@ -1,0 +1,6 @@
+name: 'SM_Vanish'
+version: '1.3.1'
+author: '@deforce_'
+description: 'Vanish module for SMPS'
+main: site.deforce.SMPS.modules.vanish.SM_Vanish
+

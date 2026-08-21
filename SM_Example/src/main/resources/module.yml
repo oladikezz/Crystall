@@ -1,0 +1,5 @@
+name: SM_Example
+version: 0.0.0
+author: Unknown
+description: Scaffold only
+main: site.deforce.SM_Example.SM_Example

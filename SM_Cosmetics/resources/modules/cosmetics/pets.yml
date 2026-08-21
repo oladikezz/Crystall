@@ -1,0 +1,407 @@
+enabled: true
+show_names: true
+
+cosmetics:
+  cat_pet:
+    enabled: true
+    name: "Cat"
+    entity: "CAT"
+    baby: false
+    scale: 1.0
+    item: "minecraft:cod"
+    spawn_sound: "entity.cat.ambient"
+
+  cat_tabby:
+    enabled: true
+    name: "Cat: Tabby"
+    entity: "CAT"
+    cat_type: "TABBY"
+    baby: false
+    scale: 1.0
+    item: "minecraft:cod"
+    spawn_sound: "entity.cat.ambient"
+
+  cat_black:
+    enabled: true
+    name: "Cat: Black"
+    entity: "CAT"
+    cat_type: "BLACK"
+    baby: false
+    scale: 1.0
+    item: "minecraft:black_dye"
+    spawn_sound: "entity.cat.ambient"
+
+  cat_red:
+    enabled: true
+    name: "Cat: Red"
+    entity: "CAT"
+    cat_type: "RED"
+    baby: false
+    scale: 1.0
+    item: "minecraft:orange_dye"
+    spawn_sound: "entity.cat.ambient"
+
+  cat_siamese:
+    enabled: true
+    name: "Cat: Siamese"
+    entity: "CAT"
+    cat_type: "SIAMESE"
+    baby: false
+    scale: 1.0
+    item: "minecraft:milk_bucket"
+    spawn_sound: "entity.cat.ambient"
+
+  cat_british_shorthair:
+    enabled: true
+    name: "Cat: British Shorthair"
+    entity: "CAT"
+    cat_type: "BRITISH_SHORTHAIR"
+    baby: false
+    scale: 1.0
+    item: "minecraft:gray_dye"
+    spawn_sound: "entity.cat.ambient"
+
+  cat_calico:
+    enabled: true
+    name: "Cat: Calico"
+    entity: "CAT"
+    cat_type: "CALICO"
+    baby: false
+    scale: 1.0
+    item: "minecraft:glow_berries"
+    spawn_sound: "entity.cat.ambient"
+
+  cat_persian:
+    enabled: true
+    name: "Cat: Persian"
+    entity: "CAT"
+    cat_type: "PERSIAN"
+    baby: false
+    scale: 1.0
+    item: "minecraft:white_wool"
+    spawn_sound: "entity.cat.ambient"
+
+  cat_ragdoll:
+    enabled: true
+    name: "Cat: Ragdoll"
+    entity: "CAT"
+    cat_type: "RAGDOLL"
+    baby: false
+    scale: 1.0
+    item: "minecraft:light_blue_dye"
+    spawn_sound: "entity.cat.ambient"
+
+  cat_white:
+    enabled: true
+    name: "Cat: White"
+    entity: "CAT"
+    cat_type: "WHITE"
+    baby: false
+    scale: 1.0
+    item: "minecraft:white_dye"
+    spawn_sound: "entity.cat.ambient"
+
+  cat_jellie:
+    enabled: true
+    name: "Cat: Jellie"
+    entity: "CAT"
+    cat_type: "JELLIE"
+    baby: false
+    scale: 1.0
+    item: "minecraft:name_tag"
+    spawn_sound: "entity.cat.ambient"
+
+  cat_all_black:
+    enabled: true
+    name: "Cat: All Black"
+    entity: "CAT"
+    cat_type: "ALL_BLACK"
+    baby: false
+    scale: 1.0
+    item: "minecraft:ink_sac"
+    spawn_sound: "entity.cat.ambient"
+
+  fox_pet:
+    enabled: true
+    name: "Fox"
+    entity: "FOX"
+    baby: false
+    scale: 0.95
+    item: "minecraft:sweet_berries"
+    spawn_sound: "entity.fox.ambient"
+
+  bee_pet:
+    enabled: true
+    name: "Bee"
+    entity: "BEE"
+    baby: false
+    scale: 0.8
+    item: "minecraft:honeycomb"
+    spawn_sound: "entity.bee.loop"
+
+  allay_pet:
+    enabled: true
+    name: "Allay"
+    entity: "ALLAY"
+    baby: false
+    scale: 0.85
+    item: "minecraft:amethyst_shard"
+    spawn_sound: "entity.allay.ambient_with_item"
+
+  frog_pet:
+    enabled: true
+    name: "Frog"
+    entity: "FROG"
+    baby: false
+    scale: 0.9
+    item: "minecraft:slime_ball"
+    spawn_sound: "entity.frog.ambient"
+
+  frog_temperate:
+    enabled: true
+    name: "Frog: Temperate"
+    entity: "FROG"
+    frog_variant: "TEMPERATE"
+    baby: false
+    scale: 0.9
+    item: "minecraft:slime_ball"
+    spawn_sound: "entity.frog.ambient"
+
+  frog_warm:
+    enabled: true
+    name: "Frog: Warm"
+    entity: "FROG"
+    frog_variant: "WARM"
+    baby: false
+    scale: 0.9
+    item: "minecraft:magma_cream"
+    spawn_sound: "entity.frog.ambient"
+
+  frog_cold:
+    enabled: true
+    name: "Frog: Cold"
+    entity: "FROG"
+    frog_variant: "COLD"
+    baby: false
+    scale: 0.9
+    item: "minecraft:packed_ice"
+    spawn_sound: "entity.frog.ambient"
+
+  parrot_pet:
+    enabled: true
+    name: "Parrot"
+    entity: "PARROT"
+    baby: false
+    scale: 0.85
+    item: "minecraft:feather"
+    spawn_sound: "entity.parrot.ambient"
+
+  parrot_red:
+    enabled: true
+    name: "&cRed Parrot"
+    entity: "PARROT"
+    baby: false
+    scale: 0.85
+    item: "minecraft:red_dye"
+    spawn_sound: "entity.parrot.ambient"
+    parrot_variant: "RED"
+
+  parrot_blue:
+    enabled: true
+    name: "&9Blue Parrot"
+    entity: "PARROT"
+    baby: false
+    scale: 0.85
+    item: "minecraft:blue_dye"
+    spawn_sound: "entity.parrot.ambient"
+    parrot_variant: "BLUE"
+
+  parrot_green:
+    enabled: true
+    name: "&aGreen Parrot"
+    entity: "PARROT"
+    baby: false
+    scale: 0.85
+    item: "minecraft:green_dye"
+    spawn_sound: "entity.parrot.ambient"
+    parrot_variant: "GREEN"
+
+  parrot_cyan:
+    enabled: true
+    name: "&bCyan Parrot"
+    entity: "PARROT"
+    baby: false
+    scale: 0.85
+    item: "minecraft:cyan_dye"
+    spawn_sound: "entity.parrot.ambient"
+    parrot_variant: "CYAN"
+
+  parrot_gray:
+    enabled: true
+    name: "&7Gray Parrot"
+    entity: "PARROT"
+    baby: false
+    scale: 0.85
+    item: "minecraft:gray_dye"
+    spawn_sound: "entity.parrot.ambient"
+    parrot_variant: "GRAY"
+
+  tiny_sniffer:
+    enabled: true
+    name: "Tiny Sniffer"
+    entity: "SNIFFER"
+    baby: true
+    scale: 0.75
+    item: "minecraft:torchflower_seeds"
+    spawn_sound: "entity.sniffer.idle"
+
+  mini_golem:
+    enabled: true
+    name: "Mini Golem"
+    entity: "IRON_GOLEM"
+    baby: false
+    scale: 0.5
+    item: "minecraft:iron_block"
+    spawn_sound: "entity.iron_golem.repair"
+
+  axolotl_pet:
+    enabled: true
+    name: "Axolotl"
+    entity: "AXOLOTL"
+    baby: false
+    scale: 0.9
+    item: "minecraft:tropical_fish_bucket"
+    spawn_sound: "entity.axolotl.idle_air"
+
+  axolotl_lucy:
+    enabled: true
+    name: "Axolotl: Lucy"
+    entity: "AXOLOTL"
+    axolotl_variant: "LUCY"
+    baby: false
+    scale: 0.9
+    item: "minecraft:pink_dye"
+    spawn_sound: "entity.axolotl.idle_air"
+
+  axolotl_wild:
+    enabled: true
+    name: "Axolotl: Wild"
+    entity: "AXOLOTL"
+    axolotl_variant: "WILD"
+    baby: false
+    scale: 0.9
+    item: "minecraft:brown_dye"
+    spawn_sound: "entity.axolotl.idle_air"
+
+  axolotl_gold:
+    enabled: true
+    name: "Axolotl: Gold"
+    entity: "AXOLOTL"
+    axolotl_variant: "GOLD"
+    baby: false
+    scale: 0.9
+    item: "minecraft:gold_nugget"
+    spawn_sound: "entity.axolotl.idle_air"
+
+  axolotl_cyan:
+    enabled: true
+    name: "Axolotl: Cyan"
+    entity: "AXOLOTL"
+    axolotl_variant: "CYAN"
+    baby: false
+    scale: 0.9
+    item: "minecraft:cyan_dye"
+    spawn_sound: "entity.axolotl.idle_air"
+
+  axolotl_blue:
+    enabled: true
+    name: "Axolotl: Blue"
+    entity: "AXOLOTL"
+    axolotl_variant: "BLUE"
+    baby: false
+    scale: 0.9
+    item: "minecraft:lapis_lazuli"
+    spawn_sound: "entity.axolotl.idle_air"
+
+  armadillo_pet:
+    enabled: false
+    name: "Armadillo"
+    entity: "ARMADILLO"
+    baby: false
+    scale: 0.95
+    item: "minecraft:armadillo_scute"
+    spawn_sound: "entity.armadillo.ambient"
+
+  goat_pet:
+    enabled: true
+    name: "Goat"
+    entity: "GOAT"
+    baby: false
+    scale: 0.6
+    item: "minecraft:goat_horn"
+    spawn_sound: "entity.goat.ambient"
+
+  llama_pet:
+    enabled: true
+    name: "Llama"
+    entity: "LLAMA"
+    baby: false
+    scale: 0.85
+    item: "minecraft:hay_block"
+    spawn_sound: "entity.llama.ambient"
+
+  mini_camel:
+    enabled: true
+    name: "Mini Camel"
+    entity: "CAMEL"
+    baby: false
+    scale: 0.6
+    item: "minecraft:cactus"
+    spawn_sound: "entity.camel.ambient"
+
+  turtle_hatchling:
+    enabled: true
+    name: "Turtle"
+    entity: "TURTLE"
+    baby: false
+    scale: 0.5
+    item: "minecraft:seagrass"
+    spawn_sound: "entity.turtle.ambient_land"
+
+  strider_pet:
+    enabled: true
+    name: "Strider"
+    entity: "STRIDER"
+    baby: false
+    scale: 0.5
+    item: "minecraft:warped_fungus"
+    spawn_sound: "entity.strider.ambient"
+
+  shulker_pet:
+    enabled: true
+    name: "Shulker"
+    entity: "SHULKER"
+    baby: false
+    scale: 0.8
+    item: "minecraft:shulker_shell"
+    spawn_sound: "entity.shulker.ambient"
+
+  vex_spirit:
+    enabled: false
+    name: "Vex Spirit"
+    entity: "VEX"
+    baby: false
+    scale: 0.7
+    item: "minecraft:echo_shard"
+    spawn_sound: "entity.vex.ambient"
+
+  mini_warden:
+    enabled: true
+    name: "Mini Warden"
+    entity: "WARDEN"
+    baby: false
+    scale: 0.35
+    item: "minecraft:sculk_catalyst"
+    spawn_sound: "entity.warden.ambient"
+
+

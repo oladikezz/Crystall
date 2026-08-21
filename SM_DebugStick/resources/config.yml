@@ -1,0 +1,88 @@
+# ============================================================
+# SM_DebugStick — Крафт и ограничения Debug Stick
+# ============================================================
+
+# Включить/выключить крафт debug stick
+craft:
+  enabled: true
+
+# Сообщение в ActionBar при попытке использовать Debug Stick на заблокированном блоке
+# Поддерживает цветовые коды (&c, &a, и т.д.)
+blacklist-message: "&cЭтот блок нельзя изменить с помощью Debug Stick!"
+
+# Защищать плиты (slabs) от превращения в двойные (DOUBLE), предотвращая дюп блоков,
+# но при этом разрешая менять их положение (TOP / BOTTOM).
+protect-slabs: true
+
+# Чёрный список блоков — debug stick не будет работать с этими блоками.
+# Используйте Material-имена Bukkit (https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html)
+# Это полезно для предотвращения дюпов и эксплойтов.
+blacklist:
+  # --- Контейнеры ---
+  - BEE_NEST
+  - BEEHIVE
+  - COMPOSTER
+  # --- Культуры / Crops (основной дюп через debug stick) ---
+  - WHEAT
+  - CARROTS
+  - POTATOES
+  - BEETROOTS
+  - MELON_STEM
+  - PUMPKIN_STEM
+  - ATTACHED_MELON_STEM
+  - ATTACHED_PUMPKIN_STEM
+  - NETHER_WART
+  - SWEET_BERRY_BUSH
+  - CAVE_VINES
+  - CAVE_VINES_PLANT
+  - COCOA
+  - BAMBOO
+  - BAMBOO_SAPLING
+  - SUGAR_CANE
+  - CACTUS
+  - KELP
+  - KELP_PLANT
+  - TWISTING_VINES
+  - TWISTING_VINES_PLANT
+  - WEEPING_VINES
+  - WEEPING_VINES_PLANT
+  - TORCHFLOWER_CROP
+  - PITCHER_CROP
+  # --- Прочие дюп-опасные блоки ---
+  - SNOW
+  - TURTLE_EGG
+  - SNIFFER_EGG
+  - CANDLE
+  - WHITE_CANDLE
+  - ORANGE_CANDLE
+  - MAGENTA_CANDLE
+  - LIGHT_BLUE_CANDLE
+  - YELLOW_CANDLE
+  - LIME_CANDLE
+  - PINK_CANDLE
+  - GRAY_CANDLE
+  - LIGHT_GRAY_CANDLE
+  - CYAN_CANDLE
+  - PURPLE_CANDLE
+  - BLUE_CANDLE
+  - BROWN_CANDLE
+  - GREEN_CANDLE
+  - RED_CANDLE
+  - BLACK_CANDLE
+  - SEA_PICKLE
+  - PISTON
+  - PISTON_HEAD
+  - END_PORTAL_FRAME
+  - END_PORTAL
+  - RESPAWN_ANCHOR
+  - END_GATEWAY
+  - STICKY_PISTON
+  - SCULK_SENSOR
+  - SCULK_SHRIEKER
+  - CAKE
+  - TRIPWIRE_HOOK
+  - BIG_DRIPLEAF
+  - BIG_DRIPLEAF_STEM
+  - CHORUS_FLOWER
+  - CHORUS_FRUIT
+  - CHORUS_PLANT

@@ -1,0 +1,30 @@
+commands:
+  atoggle:
+    enabled: true
+
+settings:
+  menu-title: "&d&lALERT &7• &fЛоги админ-команд"
+  log-format: "&7[&dALERT&7] &e{sender}&7: &f{command}"
+
+# Список команд для меню логов.
+# Можно добавлять/удалять строки, например:
+# - speed
+# - ban
+# Можно указать алиасы через "|": gm|gamemode
+tracked-commands:
+  - tp|teleport
+  - gm|gamemode
+  - check
+  - v|vanish
+  - s|spectator|spec
+  - ban|banip|tempban
+  - warn
+  - kick
+  - fix
+  - heal
+  - feed
+  - god
+  - fly
+  - speed
+  - back
+  - tphere

@@ -1,0 +1,171 @@
+enabled: true
+
+cosmetics:
+  trident_throw_tide:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Throw Tide"
+    item: "minecraft:trident"
+    trail_particle: "SPLASH"
+    hit_particle: "BUBBLE"
+    trail_count: 3
+    hit_count: 24
+    hit_spread: 0.7
+    trail_sound: "entity.drowned.shoot"
+    hit_sound: "entity.player.splash"
+
+  trident_throw_storm:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Throw Storm"
+    item: "minecraft:trident"
+    trail_particle: "ELECTRIC_SPARK"
+    hit_particle: "END_ROD"
+    trail_count: 4
+    hit_count: 34
+    hit_spread: 0.8
+    trail_sound: "entity.trident.throw"
+    hit_sound: "entity.lightning_bolt.impact"
+
+  trident_throw_orbit:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Throw Orbit"
+    item: "minecraft:trident"
+    trail_particle: "ENCHANT"
+    hit_particle: "FIREWORK"
+    trail_count: 5
+    hit_count: 36
+    hit_spread: 0.85
+    trail_sound: "entity.trident.riptide_1"
+    hit_sound: "entity.firework_rocket.twinkle"
+
+  trident_throw_abyss:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Throw Abyss"
+    item: "minecraft:nautilus_shell"
+    trail_particle: "GLOW_SQUID_INK"
+    hit_particle: "GLOW"
+    trail_count: 4
+    hit_count: 32
+    hit_spread: 0.8
+    trail_sound: "entity.glow_squid.squirt"
+    hit_sound: "entity.guardian.hurt"
+
+  trident_throw_blossom:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Throw Blossom"
+    item: "minecraft:cherry_sapling"
+    trail_particle: "CHERRY_LEAVES"
+    hit_particle: "CHERRY_LEAVES"
+    trail_count: 5
+    hit_count: 30
+    hit_spread: 0.85
+    trail_sound: "block.cherry_leaves.fall"
+    hit_sound: "entity.player.levelup"
+
+  trident_throw_tsunami:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Throw Tsunami"
+    item: "minecraft:heart_of_the_sea"
+    trail_particle: "BUBBLE"
+    hit_particle: "SPLASH"
+    trail_count: 6
+    hit_count: 38
+    hit_spread: 0.9
+    trail_sound: "entity.drowned.shoot"
+    hit_sound: "entity.player.splash"
+
+  trident_throw_aurora:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Throw Aurora"
+    item: "minecraft:sea_lantern"
+    trail_particle: "GLOW"
+    hit_particle: "ENCHANT"
+    trail_count: 5
+    hit_count: 34
+    hit_spread: 0.85
+    trail_sound: "block.conduit.ambient"
+    hit_sound: "block.beacon.activate"
+
+  trident_throw_sonic:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Throw Sonic"
+    item: "minecraft:sculk_shrieker"
+    trail_particle: "SCULK_CHARGE"
+    hit_particle: "SONIC_BOOM"
+    trail_count: 5
+    hit_count: 40
+    hit_spread: 0.95
+    trail_sound: "entity.warden.sonic_charge"
+    hit_sound: "entity.warden.sonic_boom"
+
+  trident_throw_nether:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Throw Nether"
+    item: "minecraft:magma_cream"
+    trail_particle: "FLAME"
+    hit_particle: "LAVA"
+    trail_count: 5
+    hit_count: 34
+    hit_spread: 0.85
+    trail_sound: "entity.blaze.shoot"
+    hit_sound: "block.lava.extinguish"
+
+  trident_throw_crystal:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Throw Crystal"
+    item: "minecraft:amethyst_shard"
+    trail_particle: "END_ROD"
+    hit_particle: "GLOW"
+    trail_count: 6
+    hit_count: 36
+    hit_spread: 0.9
+    trail_sound: "block.amethyst_block.hit"
+    hit_sound: "block.amethyst_cluster.break"
+
+  trident_throw_void_lance:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Throw Void Lance"
+    item: "minecraft:echo_shard"
+    trail_particle: "REVERSE_PORTAL"
+    hit_particle: "REVERSE_PORTAL"
+    trail_count: 6
+    hit_count: 38
+    hit_spread: 0.95
+    trail_sound: "block.portal.ambient"
+    hit_sound: "entity.enderman.teleport"
+
+  trident_throw_bloom:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Throw Bloom"
+    item: "minecraft:pink_petals"
+    trail_particle: "CHERRY_LEAVES"
+    hit_particle: "FIREWORK"
+    trail_count: 6
+    hit_count: 30
+    hit_spread: 0.85
+    trail_sound: "block.cherry_leaves.fall"
+    hit_sound: "entity.player.levelup"
+
+  trident_throw_gale:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Throw Gale"
+    item: "minecraft:feather"
+    trail_particle: "CLOUD"
+    hit_particle: "SWEEP_ATTACK"
+    trail_count: 6
+    hit_count: 30
+    hit_spread: 0.85
+    trail_sound: "entity.phantom.flap"
+    hit_sound: "entity.player.attack.sweep"

@@ -1,0 +1,315 @@
+enabled: true
+
+cosmetics:
+  soul_burst:
+    enabled: true
+    name: "Soul Burst"
+    item: "minecraft:soul_torch"
+    effect_type: "SOUL_RELEASE"
+    show_on_kill: true
+    particle: "SOUL"
+    particle_count: 25
+    spread: 1.0
+    sound: "entity.wither.hurt"
+    sound_volume: 0.9
+    sound_pitch: 1.0
+
+  lightning_strike:
+    enabled: true
+    name: "Lightning Strike"
+    item: "minecraft:lightning_rod"
+    effect_type: "LIGHTNING"
+    show_on_kill: true
+    particle: "ELECTRIC_SPARK"
+    particle_count: 28
+    spread: 1.2
+    sound: "entity.lightning_bolt.thunder"
+    sound_volume: 1.0
+    sound_pitch: 1.0
+
+  grave_hand:
+    enabled: true
+    name: "Grave Hand"
+    item: "minecraft:soul_soil"
+    effect_type: "GRAVE_HAND"
+    show_on_kill: true
+    particle: "SCULK_SOUL"
+    particle_count: 24
+    spread: 1.0
+    sound: "entity.zombie.attack_wooden_door"
+    sound_volume: 0.95
+    sound_pitch: 0.75
+
+  frozen_end:
+    enabled: true
+    name: "Frozen End"
+    item: "minecraft:blue_ice"
+    effect_type: "FREEZE"
+    show_on_kill: true
+    particle: "SNOWFLAKE"
+    particle_count: 30
+    spread: 1.4
+    sound: "block.glass.break"
+    sound_volume: 0.9
+    sound_pitch: 1.15
+
+  inferno_burst:
+    enabled: true
+    name: "Inferno Burst"
+    item: "minecraft:blaze_powder"
+    effect_type: "FLAME_BURST"
+    show_on_kill: true
+    particle: "FLAME"
+    particle_count: 32
+    spread: 1.3
+    sound: "entity.blaze.shoot"
+    sound_volume: 0.9
+    sound_pitch: 1.0
+
+  smoke_vanish:
+    enabled: true
+    name: "Smoke Vanish"
+    item: "minecraft:campfire"
+    effect_type: "SMOKE_CLOUD"
+    show_on_kill: true
+    particle: "SMOKE"
+    particle_count: 24
+    spread: 1.2
+    sound: "block.fire.extinguish"
+    sound_volume: 0.8
+    sound_pitch: 0.9
+
+  confetti_party:
+    enabled: true
+    name: "Confetti Party"
+    item: "minecraft:firework_star"
+    effect_type: "CONFETTI"
+    show_on_kill: true
+    particle: "NOTE"
+    particle_count: 30
+    spread: 1.5
+    sound: "entity.firework_rocket.blast"
+    sound_volume: 0.9
+    sound_pitch: 1.1
+
+  blood_splatter:
+    enabled: true
+    name: "Blood Splatter"
+    item: "minecraft:red_dye"
+    effect_type: "BLOOD_SPLATTER"
+    show_on_kill: true
+    particle: "DUST"
+    particle_count: 28
+    spread: 1.3
+    sound: "entity.player.hurt"
+    sound_volume: 0.85
+    sound_pitch: 0.85
+
+  void_vortex:
+    enabled: true
+    name: "Void Vortex"
+    item: "minecraft:crying_obsidian"
+    effect_type: "VORTEX"
+    show_on_kill: true
+    particle: "REVERSE_PORTAL"
+    particle_count: 30
+    spread: 1.6
+    sound: "block.portal.ambient"
+    sound_volume: 0.9
+    sound_pitch: 0.8
+
+  arcane_sphere:
+    enabled: true
+    name: "Arcane Sphere"
+    item: "minecraft:ender_eye"
+    effect_type: "SPHERE_BURST"
+    show_on_kill: true
+    particle: "ENCHANTED_HIT"
+    particle_count: 30
+    spread: 1.4
+    sound: "entity.evoker.prepare_attack"
+    sound_volume: 0.9
+    sound_pitch: 1.0
+
+  shattered_core:
+    enabled: true
+    name: "Shattered Core"
+    item: "minecraft:amethyst_shard"
+    effect_type: "SHATTER"
+    show_on_kill: true
+    particle: "ENCHANTED_HIT"
+    particle_count: 34
+    spread: 1.4
+    sound: "block.amethyst_cluster.break"
+    sound_volume: 0.95
+    sound_pitch: 1.0
+
+  spirit_helix:
+    enabled: true
+    name: "Spirit Helix"
+    item: "minecraft:end_rod"
+    effect_type: "HELIX_RISE"
+    show_on_kill: true
+    particle: "END_ROD"
+    particle_count: 26
+    spread: 1.1
+    sound: "entity.allay.ambient_with_item"
+    sound_volume: 0.8
+    sound_pitch: 1.2
+
+  nova_explosion:
+    enabled: true
+    name: "Nova Explosion"
+    item: "minecraft:nether_star"
+    effect_type: "EXPLOSION"
+    show_on_kill: true
+    particle: "FIREWORK"
+    particle_count: 36
+    spread: 1.5
+    sound: "entity.firework_rocket.large_blast"
+    sound_volume: 1.0
+    sound_pitch: 1.05
+
+  arcane_spiral:
+    enabled: true
+    name: "Arcane Spiral"
+    item: "minecraft:enchanted_book"
+    effect_type: "SPIRAL"
+    show_on_kill: true
+    particle: "ENCHANT"
+    particle_count: 34
+    spread: 1.35
+    sound: "entity.evoker.cast_spell"
+    sound_volume: 0.9
+    sound_pitch: 1.0
+
+  ocean_fountain:
+    enabled: true
+    name: "Ocean Fountain"
+    item: "minecraft:heart_of_the_sea"
+    effect_type: "FOUNTAIN"
+    show_on_kill: true
+    particle: "SPLASH"
+    particle_count: 34
+    spread: 1.45
+    sound: "entity.dolphin.splash"
+    sound_volume: 0.9
+    sound_pitch: 1.05
+
+  love_farewell:
+    enabled: true
+    name: "Love Farewell"
+    item: "minecraft:rose_bush"
+    effect_type: "HEARTS"
+    show_on_kill: true
+    particle: "HEART"
+    particle_count: 30
+    spread: 1.35
+    sound: "entity.player.levelup"
+    sound_volume: 0.8
+    sound_pitch: 1.2
+
+  totem_requiem:
+    enabled: true
+    name: "Totem Requiem"
+    item: "minecraft:totem_of_undying"
+    effect_type: "CONFETTI"
+    show_on_kill: true
+    particle: "TOTEM_OF_UNDYING"
+    particle_count: 34
+    spread: 1.4
+    sound: "item.totem.use"
+    sound_volume: 0.95
+    sound_pitch: 1.0
+
+  sky_pillar:
+    enabled: true
+    name: "Sky Pillar"
+    item: "minecraft:beacon"
+    effect_type: "PILLAR"
+    show_on_kill: true
+    particle: "END_ROD"
+    particle_count: 32
+    spread: 1.3
+    sound: "block.beacon.activate"
+    sound_volume: 0.95
+    sound_pitch: 1.1
+
+  prism_shatter:
+    enabled: true
+    name: "Prism Shatter"
+    item: "minecraft:prismarine_crystals"
+    effect_type: "SHATTER"
+    show_on_kill: true
+    particle: "GLOW"
+    particle_count: 34
+    spread: 1.35
+    sound: "block.glass.break"
+    sound_volume: 0.9
+    sound_pitch: 1.15
+
+  black_hole:
+    enabled: true
+    name: "Black Hole"
+    item: "minecraft:crying_obsidian"
+    effect_type: "VORTEX"
+    show_on_kill: true
+    particle: "REVERSE_PORTAL"
+    particle_count: 36
+    spread: 1.6
+    sound: "block.portal.ambient"
+    sound_volume: 0.95
+    sound_pitch: 0.8
+
+  solar_burst:
+    enabled: true
+    name: "Solar Burst"
+    item: "minecraft:blaze_powder"
+    effect_type: "FLAME_BURST"
+    show_on_kill: true
+    particle: "FLAME"
+    particle_count: 36
+    spread: 1.45
+    sound: "entity.blaze.shoot"
+    sound_volume: 0.95
+    sound_pitch: 1.05
+
+  frozen_crystal:
+    enabled: true
+    name: "Frozen Crystal"
+    item: "minecraft:packed_ice"
+    effect_type: "FREEZE"
+    show_on_kill: true
+    particle: "SNOWFLAKE"
+    particle_count: 34
+    spread: 1.45
+    sound: "block.amethyst_cluster.break"
+    sound_volume: 0.9
+    sound_pitch: 1.2
+
+  thunder_judgement:
+    enabled: true
+    name: "Thunder Judgement"
+    item: "minecraft:lightning_rod"
+    effect_type: "LIGHTNING"
+    show_on_kill: true
+    particle: "ELECTRIC_SPARK"
+    particle_count: 36
+    spread: 1.5
+    sound: "entity.lightning_bolt.thunder"
+    sound_volume: 1.0
+    sound_pitch: 1.0
+
+  ghost_helix:
+    enabled: true
+    name: "Ghost Helix"
+    item: "minecraft:soul_lantern"
+    effect_type: "HELIX_RISE"
+    show_on_kill: true
+    particle: "SOUL"
+    particle_count: 30
+    spread: 1.25
+    sound: "entity.wither.ambient"
+    sound_volume: 0.85
+    sound_pitch: 1.05
+

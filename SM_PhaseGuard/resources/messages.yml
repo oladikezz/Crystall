@@ -1,0 +1,18 @@
+blocked: "&[SECONDARY]Проход сквозь блоки запрещён."
+alert: "&[MAIN]{player} &[SECONDARY]пытается пройти сквозь блоки: &[MAIN]{block} &[SECONDARY]в &[MAIN]{world} {x} {y} {z} &[SECONDARY](подряд: {count})"
+
+status-header: "&[MAIN]PhaseGuard"
+status-enabled: "&[SECONDARY]Включён: &[MAIN]{value}"
+status-mode: "&[SECONDARY]Режим: &[MAIN]{value}"
+status-tracked: "&[SECONDARY]Под наблюдением: &[MAIN]{value}"
+status-violations: "&[SECONDARY]Нарушений за сессию: &[MAIN]{value}"
+
+stats-header: "&[MAIN]Нарушения PhaseGuard"
+stats-line: "&[MAIN]{player}&[SECONDARY]: {value}"
+stats-empty: "&[SECONDARY]Нарушений не зафиксировано."
+stats-cleared: "&[SECONDARY]Счётчик нарушений для &[MAIN]{player} &[SECONDARY]сброшен."
+
+reloaded: "&[SECONDARY]Конфигурация PhaseGuard перезагружена."
+not-loaded: "&[SECONDARY]Конфигурация не загружена."
+player-not-found: "&[SECONDARY]Игрок &[MAIN]{player} &[SECONDARY]не найден."
+usage: "&[SECONDARY]Использование: &[MAIN]/phaseguard <status|reload|stats|clear>"

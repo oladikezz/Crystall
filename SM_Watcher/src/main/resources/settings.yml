@@ -1,0 +1,26 @@
+# GUI Presets & Choice Settings
+
+presets:
+  spawn-distances:
+    - 2.0
+    - 5.0
+    - 8.0
+    - 12.0
+  durations:
+    - 5
+    - 10
+    - 30
+    - 60
+  despawn-distances:
+    - 10.0
+    - 20.0
+    - 30.0
+    - 50.0
+
+# Sound presets used by EffectsMenu GUI
+# Each preset triggers a curated combination of sounds
+sound-presets:
+  - "ANCIENT_HORROR"       # Warden heartbeat + cave ambience + dark presence
+  - "SPECTRAL_WHISPER"     # Enderman stare + allay death + whispers
+  - "SHADOW_DISCHARGE"     # Wither spawn + lightning + portal trigger
+  - "NONE"                 # No sounds

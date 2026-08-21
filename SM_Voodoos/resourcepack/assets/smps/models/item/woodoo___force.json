@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/totem_of_undying",
+  "textures": {
+    "layer0": "smps:item/woodoo___force"
+  }
+}
+

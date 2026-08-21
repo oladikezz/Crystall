@@ -1,0 +1,19 @@
+alerts:
+  usage: "&[SECONDARY]Usage: &[MAIN]/consolealert [nickname] [chat|title|all] \"[text]\" [sound|none]"
+  console-only: "&cThis command can only be used from console."
+  player-not-found: "&cPlayer not found or offline: &f{player}"
+  invalid-type: "&cInvalid type. Use: &fchat&c, &ftitle&c or &fall"
+  invalid-sound: "&cInvalid sound key: &f{sound}&c. Use a namespaced key (example: &fminecraft:block.note_block.pling&c) or &fnone"
+  invalid-format: "&cInvalid format. Use: &f/consolealert [nickname] [type] \"[text]\" [sound|none]"
+  unclosed-quotes: "&cMessage in quotes is not closed."
+  empty-message: "&cMessage cannot be empty."
+  sent: "&aAlert sent to &f{player}&a as &f{type}&a (sound: &f{sound}&a)."
+  link-hover: "&[SECONDARY]Click to open link"
+
+log:
+  usage: "&[SECONDARY]Usage: &[MAIN]/consolealertlog [on|off|toggle|status]"
+  console-only: "&cThis command can only be used from console."
+  enabled: "&aConsole alert logs enabled."
+  disabled: "&eConsole alert logs disabled."
+  status: "&[SECONDARY]Console alert logs: &[MAIN]{state}"
+

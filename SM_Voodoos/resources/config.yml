@@ -1,0 +1,267 @@
+commands:
+  voodoo:
+    enabled: true
+
+# ============================================================
+# Внешний вид предмета вуду-куклы.
+# Поддерживает:
+#   - Легаси цвета: &c, &a, &l и т.д.
+#   - HEX цвета: &#RRGGBB или #RRGGBB
+#   - Градиенты: <gradient:#RRGGBB:#RRGGBB>текст</gradient>
+#                 <#RRGGBB:#RRGGBB>текст</>
+#   - SMPS цвета: &[MAIN], &[SECONDARY]
+#   - Плейсхолдеры: {target}, {owner}
+# ============================================================
+item:
+  # Название предмета (всегда одинаковое, не зависит от игрока)
+  name: "<gradient:#F45454:#373737>ᴠᴏᴏᴅᴏᴏ ᴅᴏʟʟ</gradient>"
+  # Описание (lore). Каждая строка — отдельная строка в лоре.
+  # Пустая строка "" добавляет пустую строку.
+  lore:
+    - ""
+    - "&7Цель: &e{target}"
+    - "&7Владелец: &a{owner} &c❤"
+    - ""
+    - "&cЛКМ &7— негативный эффект"
+    - "&c⇧+ЛКМ &7— телепорт цели к вам"
+    - "&aПКМ &7— позитивный эффект"
+    - ""
+    - "&4⚠ Нельзя выбросить или положить в контейнер"
+  # Свечение зачарования
+  glow: true
+
+# ============================================================
+# Кастомные модели для ресурспака.
+# Каждый ник может иметь:
+#   enabled: true/false — включена ли кастомная модель
+#   prefix: "текст"    — кастомное отображение ника в {target}/{owner}
+#                         (поддерживает градиенты, цвета)
+# Для каждого ника с enabled: true должен существовать файл в ресурспаке:
+#   assets/smps/items/voodoo_<ник>.json
+#   assets/smps/models/item/voodoo_<ник>.json
+#   assets/smps/textures/item/voodoo_<ник>.png
+# Без ресурспака клиент всегда видит обычный тотем.
+# ============================================================
+models:
+  combogames_gg:
+    enabled: true
+    prefix: "<gradient:#FF6B6B:#4ECDC4>ComboGames</gradient>"
+  lalawar:
+    enabled: true
+    prefix: "&6&lLalawar"
+  __force:
+    enabled: true
+    prefix: "<gradient:#A770EF:#CF8BF3>Force</gradient>"
+  mexanobop:
+    enabled: true
+    prefix: "<gradient:#F7971E:#FFD200>MeXaNoBoP</gradient>"
+  kwertyk:
+    enabled: true
+    prefix: "&b&lKwertyk"
+  carlistish:
+    enabled: true
+    prefix: "<gradient:#11998E:#38EF7D>Carlistish</gradient>"
+  doit2:
+    enabled: true
+    prefix: "&d&lDoIt2"
+  5api:
+    enabled: true
+    prefix: "<gradient:#FC5C7D:#6A82FB>5api</gradient>"
+  _jun10r_:
+    enabled: true
+    prefix: "&e&lJun10r"
+  seimantt:
+    enabled: true
+    prefix: "<gradient:#C33764:#1D2671>Seimantt</gradient>"
+
+# Общие настройки
+settings:
+  # Кулдаун между использованиями (секунды)
+  cooldown-seconds: 5
+  # Максимальная дистанция для действия эффектов (блоки, 0 = без лимита)
+  max-distance: 0
+  # Минимальное здоровье цели после негативных эффектов (в половинках сердец)
+  min-target-health: 2.0
+
+# ============================================================
+# Shift+ЛКМ — телепорт цели к владельцу
+# ============================================================
+shift-ability:
+  enabled: true
+  # Собственный кулдаун (секунды)
+  cooldown-seconds: 60
+
+# ============================================================
+# Негативные эффекты (ЛКМ — атака по воздуху / по блоку)
+#
+# Сначала кидается кубик: status-effect-chance определяет шанс
+# наложить зелье-эффект (статус). Если не выпало — срабатывает
+# случайный спец. эффект из special-effects.
+# Внутри каждой группы шанс каждого эффекта — его вес.
+# ============================================================
+negative-effects:
+  # Шанс наложить статус-эффект (зелье). Остальное — спец. эффект.
+  status-effect-chance: 0.5
+
+  # Пул статус-эффектов (зелья). Вес каждого — relative chance.
+  status-effects:
+    nausea:
+      enabled: true
+      chance: 0.25
+      duration: 5
+      amplifier: 0
+    slowness:
+      enabled: true
+      chance: 0.2
+      duration: 8
+      amplifier: 1
+    blindness:
+      enabled: true
+      chance: 0.15
+      duration: 4
+      amplifier: 0
+    hunger:
+      enabled: true
+      chance: 0.2
+      duration: 10
+      amplifier: 1
+    weakness:
+      enabled: true
+      chance: 0.2
+      duration: 8
+      amplifier: 0
+    mining-fatigue:
+      enabled: true
+      chance: 0.15
+      duration: 10
+      amplifier: 1
+    levitation:
+      enabled: true
+      chance: 0.1
+      duration: 3
+      amplifier: 0
+
+  # Пул спец. эффектов. Вес каждого — relative chance.
+  special-effects:
+    drop-mainhand:
+      enabled: true
+      chance: 0.3
+    damage:
+      enabled: true
+      chance: 0.2
+      amount: 4.0
+    freeze:
+      enabled: true
+      chance: 0.15
+      freeze-ticks: 140
+    force-look:
+      enabled: true
+      chance: 0.15
+      duration: 5
+    lay-down:
+      enabled: true
+      chance: 0.1
+      duration: 5
+    inventory-shuffle:
+      enabled: true
+      chance: 0.15
+    elder-guardian:
+      enabled: true
+      chance: 0.1
+      duration: 15
+      amplifier: 2
+
+# ============================================================
+# Позитивные эффекты (ПКМ — использование предмета)
+#
+# Сначала кидается кубик: status-effect-chance определяет шанс
+# наложить зелье-эффект (статус). Если не выпало — срабатывает
+# случайный спец. эффект из special-effects.
+# ============================================================
+positive-effects:
+  # Шанс наложить статус-эффект (зелье). Остальное — спец. эффект.
+  status-effect-chance: 0.5
+
+  # Пул статус-эффектов (зелья)
+  status-effects:
+    health-boost:
+      enabled: true
+      chance: 0.3
+      duration: 30
+      amplifier: 1
+    regeneration:
+      enabled: true
+      chance: 0.35
+      duration: 10
+      amplifier: 1
+    speed:
+      enabled: true
+      chance: 0.3
+      duration: 15
+      amplifier: 1
+    absorption:
+      enabled: true
+      chance: 0.25
+      duration: 20
+      amplifier: 1
+    resistance:
+      enabled: true
+      chance: 0.2
+      duration: 15
+      amplifier: 0
+    fire-resistance:
+      enabled: true
+      chance: 0.2
+      duration: 30
+      amplifier: 0
+    jump-boost:
+      enabled: true
+      chance: 0.25
+      duration: 15
+      amplifier: 1
+    haste:
+      enabled: true
+      chance: 0.2
+      duration: 15
+      amplifier: 1
+    saturation:
+      enabled: true
+      chance: 0.2
+      duration: 5
+      amplifier: 0
+    night-vision:
+      enabled: true
+      chance: 0.2
+      duration: 30
+      amplifier: 0
+
+  # Пул спец. эффектов (косметические, не ломают геймплей)
+  special-effects:
+    # Сердечки вокруг игрока
+    heart-particles:
+      enabled: true
+      chance: 0.3
+      # Количество частиц
+      count: 15
+    # Запуск фейерверка над игроком
+    firework:
+      enabled: true
+      chance: 0.2
+    # Анимация тотема бессмертия (визуально, без воскрешения)
+    totem-animation:
+      enabled: true
+      chance: 0.2
+    # Свечение (Glowing) на X секунд — подсветка контура
+    glowing:
+      enabled: true
+      chance: 0.15
+      duration: 10
+    # Восстановить голод до максимума
+    feed:
+      enabled: true
+      chance: 0.2
+    # Потушить, если горит
+    extinguish:
+      enabled: true
+      chance: 0.15
+

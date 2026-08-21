@@ -1,0 +1,6 @@
+enabled: true
+drop-on-death: true
+settings:
+  only-pvp: false
+  drop-chance: 1.0
+  death-time-format: "dd.MM.yyyy HH:mm"

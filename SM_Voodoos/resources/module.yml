@@ -1,0 +1,5 @@
+name: SM_Voodoos
+version: 1.0.2
+author: '@deforce_'
+description: '???'
+main: net.schalker.SMPS.modules.voodoo.VoodooModule

@@ -1,129 +1,105 @@
-# 💎 Crystall Core — The Ultra-High Performance Minecraft Server Engine
+# 💎 Crystall Core & SMPS (Schalker Modular Plugin System)
 
 <p align="center">
   <img src="https://img.shields.io/badge/Java-25%2B-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java 25"/>
   <img src="https://img.shields.io/badge/TPS-20.0%20Rock%20Solid-4CAF50?style=for-the-badge" alt="20 TPS"/>
-  <img src="https://img.shields.io/badge/Memory-~76MB%20Heap-00BCD4?style=for-the-badge" alt="76MB Heap"/>
-  <img src="https://img.shields.io/badge/Architecture-Zero--GC%20%7C%20LOD%20Tick-FF5722?style=for-the-badge" alt="Zero-GC"/>
+  <img src="https://img.shields.io/badge/Engine-Minestom%20%7C%20DoAPI-00BCD4?style=for-the-badge" alt="Minestom + DoAPI"/>
+  <img src="https://img.shields.io/badge/Modules-36%20Active%20Modules-FF5722?style=for-the-badge" alt="36 Modules"/>
 </p>
 
 ---
 
-**Crystall Core** — это революционное, сверхпроизводительное ядро сервера Minecraft на базе **Minestom (2026)**, спроектированное для максимального TPS при экстремальных нагрузках (1000+ игроков, 2000+ мобов на одном инстансе).
+## 📌 О проекте (About The Project)
 
-В ядре устранены ключевые архитектурные проблемы стандартных серверов (Spigot / Paper / Purpur): полное сканирование мира $O(N)$, блокирующий ввод-вывод чанков, миллионы боксинг-аллокаций `Long/UUID` и тяжелая тригонометрия FPU.
+Данный репозиторий объединяет два мощных технологических стека для высоконагруженных Minecraft-серверов нового поколения:
 
----
-
-## ⚡ Ключевые технологические инновации (Core Innovations)
-
-```mermaid
-graph TD
-    A[Crystall Engine] --> B[SpatialGrid O-1 Lookup]
-    A --> C[AdaptiveTickEngine LOD 0..3]
-    A --> D[Region Storage 32x32 Palette]
-    A --> E[FastMath LUT Engine]
-    A --> F[Zero-Box Primitive Structures]
-    A --> G[Thread-Local Zero-GC IO]
-```
-
-### 1. 🌐 Spatial Partitioning Grid ($O(1)$ Entity Index)
-- Заменяет медленный глобальный перебор сущностей $O(N)$ на пространственный хэш-индекс чанков с битовым ключом `packChunk(cx, cz)`.
-- Запросы `getEntitiesInRadius`, `getNearestEntity` и `countEntitiesInRadius` выполняются за **$O(1)$ миллисекунды**.
-
-### 2. ⏱️ Adaptive Tick Engine (4-уровневые LOD Зоны)
-- **Zone 0 (0–2 чанка от игрока):** 20 Hz (каждый тик) — активная зона боя и взаимодействия.
-- **Zone 1 (3–5 чанков):** 4 Hz (каждые 5 тиков) — фоновый рост растений и жидкости.
-- **Zone 2 (6–10 чанков):** 1 Hz (каждые 20 тиков) — редкие обновления.
-- **Zone 3 (10+ чанков):** 0 Hz (полная заморозка тикинга).
-- **Результат:** Экономия **60–80% вычислительной мощности CPU**.
-
-### 3. 🗄️ Region Chunk Storage (32×32 Chunks / File)
-- Формат файлов `r.rx.rz.dat` (1024 чанка на 1 регион).
-- **Section Skip:** Пустые воздушные секции пропускаются по 24-битной маске.
-- **Palette Encoding:** Палитровое сжатие `stateId` блоков.
-- **Thread-Local Zero-GC Buffers:** Сжатие и распаковка (Deflate/Inflate) работают через пулы прямых буферов без аллокаций в Heap.
-
-### 4. 🧮 FastMath LUT & Bit-Packing Engine
-- Таблица предрасчета тригонометрии на **16,384 точек**.
-- `FastMath.sin()`, `FastMath.cos()` работают в **10–15 раз быстрее** `java.lang.Math`.
-- `FastMath.invSqrt()` (Fast Inverse Square Root) для молниеносной нормализации векторов физики.
-- Упаковка 3D координат блоков в 1 примитивный `long`.
-
-### 5. 🧱 Zero-Box Primitive Collections
-- Специализированные структуры `Long2ObjectOpenHashMap` и `LongOpenHashSet` на открытой адресации.
-- Полное устранение боксинга (`long` -> `java.lang.Long`), кэш-локальность процессора и 0 промежуточных объектов `Map.Entry`.
-
-### 6. ⚡ BFS Alternate-Current Style Redstone
-- Очередь распространения сигналов редстоуна на алгоритме BFS (Breadth-First Search).
-- Исключает рекурсию, риск `StackOverflowError` и строковые аллокации свойств.
+1. **💎 Crystall Core (`:core`)** — Сверхпроизводительное, чистое автономное ядро на базе **Minestom (2026)** с пространственным $O(1)$ хэшированием, 32×32 регионным хранилищем, адаптивным LOD-тикингом и Zero-GC структурами (удерживает **20.0 TPS при 2000+ мобов** при **<100 МБ ОЗУ**).
+2. **🧩 DoAPI & SMPS (`:DoAPI` + 36 Модулей)** — Модульная фреймворк-система горячей загрузки и управления плагинами/модулями на лету без перезагрузки сервера.
 
 ---
 
-## 📊 Сравнение производительности (Benchmark Matrix)
+## ⚡ Технологический стек Crystall Core
 
-Тест проводился на сервере: **AMD Ryzen 9 7950X, 64 GB DDR5, Java 25, 2000 активных ботов**:
-
-| Движок / Ядро | TPS (2000 сущностей) | MSPT | ОЗУ (Heap Used) | Холодный старт |
-| :--- | :---: | :---: | :---: | :---: |
-| **Vanilla Minecraft 1.21** | 6.2 TPS | 161.2 ms | 3.8 GB | ~18.5 сек |
-| **Paper 1.21** | 12.8 TPS | 78.1 ms | 2.1 GB | ~12.2 сек |
-| **Purpur 1.21** | 14.1 TPS | 70.9 ms | 1.9 GB | ~10.8 сек |
-| **Folia (1 Region)** | 18.2 TPS | 54.9 ms | 1.6 GB | ~14.0 сек |
-| 💎 **Crystall Pure Core** | **20.0 TPS** | **49.9 ms** | **~99 MB** | **~1.5 сек** |
+- 🌐 **SpatialGrid ($O(1)$ Entity Index):** Пространственная сетка чанков для мгновенного поиска сущностей без глобального перебора мира $O(N)$.
+- ⏱️ **AdaptiveTickEngine (LOD 0..3):** 4-уровневые зоны детализации тиков, снижающие холостой ход CPU на 60–80%.
+- 🗄️ **32×32 Region Chunk Storage:** Регионный формат с пропуском пустых секций и Thread-Local Zero-GC буферами сжатия.
+- 🧮 **FastMath LUT:** 16,384-точечная таблица предрасчета тригонометрии (до 15x быстрее `java.lang.Math`).
+- 🧱 **Zero-Box Collections:** Примитивные хэш-таблицы `Long2ObjectOpenHashMap` и `LongOpenHashSet`.
+- ⚡ **Alternate-Current BFS Redstone:** Очередь распространения редстоун-сигналов без рекурсии.
+- 📡 **Встроенный мониторинг:** REST API (`:25566`), Prometheus Metrics и WebMap (`:8080`).
 
 ---
 
-## 🚀 Быстрый старт (Getting Started)
+## 🧩 Список модулей SMPS (`build_all`)
+
+Репозиторий включает 36 готовых модулей для экосистемы DoAPI / SMPS:
+
+| Модуль | Описание |
+| :--- | :--- |
+| **`SM_Accounts`** | Интеграция аккаунтов и Discord-бот через JDA |
+| **`SM_AdminList`** | Список администрации и вебхуки оповещений |
+| **`SM_Alert`** | Система глобальных всплывающих оповещений |
+| **`SM_Announces`** | Автоматические циклические объявления с поддержкой MiniMessage |
+| **`SM_AutoReplenish`** | Автопополнение предметов в инвентаре |
+| **`SM_Checker`** | Проверка игроков на запрещенный софт и модерация |
+| **`SM_Clans`** | Полнофункциональная клановая система с PlaceholderAPI |
+| **`SM_Cosmetics`** | Система кастомизации, питомцы и визуальные эффекты |
+| **`SM_Crowns`** | Короны и титулы игроков |
+| **`SM_DebugStick`** | Кастомный инструмент отладки блоков |
+| **`SM_Essentials`** | Базовые серверные утилиты и команды |
+| **`SM_FastLeaves`** | Мгновенное и красивое опадание листвы |
+| **`SM_Flags`** | Флаги территорий и событий |
+| **`SM_Hat`** | Команда надевания блока на голову |
+| **`SM_Help`** | Интерактивное меню помощи |
+| **`SM_Invsee`** | Просмотр и редактирование инвентарей игроков |
+| **`SM_ItemDespawn`** | Оптимизированный деспавн выброшенных предметов |
+| **`SM_ItemMeta`** | Расширенное управление метаданными предметов |
+| **`SM_KeepInventory`** | Умное сохранение инвентаря по пермишенам |
+| **`SM_Lightcraft`** | Оптимизированный переносной источник света |
+| **`SM_Marry`** | Свадьбы и социальные взаимодействия |
+| **`SM_PhaseGuard`** | Защита от фазирования и прохождения сквозь блоки |
+| **`SM_PlayerHeads`** | Выпадение голов игроков при смерти |
+| **`SM_QuietBan`** | Теневые и тихие блокировки нарушителей |
+| **`SM_Scale`** | Изменение масштаба и размера сущностей |
+| **`SM_Spit`** | Забавные социальные анимации и механики |
+| **`SM_Stats`** | Сбор и хранение игровой статистики |
+| **`SM_StonecutterAdditions`** | Расширенные рецепты для камнереза |
+| **`SM_StreamerMode`** | Режим стримера со скрытием ников и координат |
+| **`SM_TrafficOptimizer`** | Netty-фильтр пакетов частиц для снижения сетевого трафика |
+| **`SM_TrollItems`** | Предметы для ивентов и троллинга |
+| **`SM_UserInfo`** | Подробная информация об аккаунте игрока |
+| **`SM_Vanish`** | Полная невидимость для администрации с поддержкой TAB API |
+| **`SM_Voodoos`** | Куклы вуду и магические механики |
+| **`SM_Watcher`** | Защита и отслеживание пакетов (PacketEvents) |
+
+---
+
+## 🛠️ Сборка проекта (Building)
 
 ### Требования:
-- **Java 25+** (OpenJDK / GraalVM)
-- **Gradle 8.x / 9.x** (Включен Gradle Wrapper)
+- **Java 25+** (OpenJDK / Temurin / GraalVM)
 
-### Сборка Fat JAR:
+### Команды Gradle:
+
 ```bash
-# Клонирование репозитория
-git clone https://github.com/oladikezz/Crystall.git
-cd Crystall
+# 1. Сборка ядра Crystall Core (Fat JAR)
+./gradlew :core:jar
 
-# Сборка исполняемого Fat JAR
-./gradlew jar
-```
+# 2. Сборка DoAPI и всех 36 модулей SMPS в папку build/dist/
+./gradlew build_all
 
-### Запуск с рекомендованными JVM флагами:
-```bash
-java -Xms2G -Xmx4G \
-     -XX:+UseZGC \
-     -XX:+ZGenerational \
-     -XX:+UseStringDeduplication \
-     -jar core/build/libs/core-1.0-SNAPSHOT.jar
+# 3. Сборка конкретного модуля (например, SM_Clans)
+./gradlew :SM_Clans:jar
 ```
 
 ---
 
-## 📡 Встроенный Мониторинг & REST API
+## 📖 Документация API
 
-| Эндпоинт | Порт | Описание |
-| :--- | :---: | :--- |
-| `GET /api/status` | `:25566` | Базовый статус: онлайн, активные боты, TPS, MSPT, ОЗУ. |
-| `GET /api/performance` | `:25566` | Высокоточный мониторинг: мин/макс/средний MSPT, LOD-чанки, дальность. |
-| `GET /api/benchmark` | `:25566` | Результаты встроенного микробенчмарка движка. |
-| `GET /metrics` | `:25566` | Метрики в формате Prometheus для Grafana. |
-| `GET /` | `:8080` | Интерактивная живая веб-карта игрового мира (WebMap). |
-
----
-
-## 🛠️ Встроенные команды сервера
-
-- `/benchmark run` — Запуск всестороннего микробенчмарка движка с генерацией отчета.
-- `/stresstest start <count>` — Спавн стресс-ботов для нагрузочного тестирования.
-- `/stresstest stop` — Остановка и мгновенная очистка стресс-теста.
-- `/time <set|query> <day|night|ticks>` — Ванильное управление временем.
-- `/weather <clear|rain|thunder>` — Ванильное управление погодой.
-- `/gamemode <0|1|2|3>` — Переключение режима игры.
-- `/tp <target>` / `/give <item>` / `/ban` / `/kick` / `/stop`.
+Подробное руководство по созданию собственных модулей для SMPS доступно в файле:  
+📄 **[`SMPS_API_DOCUMENTATION.md`](file:///c:/Users/user/Desktop/Crystall%20-%20%D0%AF%D0%B4%D1%80%D0%BE/SMPS_API_DOCUMENTATION.md)**
 
 ---
 
 ## 📜 Лицензия
-Проект распространяется под открытой лицензией MIT. Разработано для высоконагруженных игровых проектов нового поколения.
+Открытая лицензия **MIT**. Проект готов к продакшн-использованию.

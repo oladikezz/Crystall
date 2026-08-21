@@ -1,0 +1,696 @@
+commands:
+  flags:
+    enabled: true
+
+# ============================================================
+# Webhook Groups — каждая группа имеет URL вебхука и список флагов.
+# Флаг может принадлежать только одной группе.
+# Если webhook_groups не задан — используются старые discord.webhook-url
+# и discord.storage-webhook-url для обратной совместимости.
+# ============================================================
+webhook_groups:
+  main:
+    webhook: "your-webhook-url-here"
+    flags:
+      - tnt_inventory
+      - lava_placement
+      - tnt_placement_overworld
+      - tnt_placement_nether
+      - fire_ignite
+      - villager_kill
+      - pet_kill
+      - end_crystal_explode
+      - end_crystal_damage_entity
+      - end_crystal_damage_player
+      - chat_spam
+      - chat_repeat
+      - player_kill
+      - container_explosion
+      - container_burn
+      - container_break
+      - shulker_break
+      - wither_summon_overworld
+      - wither_summon_nether
+      - wither_summon_end
+      - wither_container_destroy
+      - rare_item
+      - container_drop
+      - big_data_item_interact
+  mods:
+    webhook: "your-webhook-url-here"
+    flags:
+      - admin_ban
+      - admin_warn
+      - admin_mute
+      - whitelist_add
+      - op_grant
+  ores:
+    webhook: "your-webhook-url-here"
+    flags:
+      - ore_pickup
+      - ancient_debris_pickup
+  storage:
+    webhook: "your-webhook-url-here"
+    flags:
+      - boat_chest_place
+      - boat_chest_enter
+      - boat_chest_exit
+      - boat_chest_interact
+
+# Для обратной совместимости (используется если webhook_groups отсутствует)
+discord:
+  webhook-url: "your-webhook-url-here"
+  storage-webhook-url: "your-webhook-url-here"
+
+settings:
+  # Cooldown per severity level (seconds)
+  # HIGH (red) — fires almost always, minimal cooldown
+  cooldown-high-seconds: 2
+  # MEDIUM (yellow) — moderate cooldown
+  cooldown-medium-seconds: 30
+  # LOW (green) — longest cooldown
+  cooldown-low-seconds: 60
+  # How long to show action bar messages (seconds)
+  actionbar-duration-seconds: 5
+  # Maximum history events to store
+  history-size: 200
+  # Показывать флаги кликабельным сообщением в чате (с кнопкой [TP])
+  chat-notifications: true
+
+# ============================================================
+# Чувствительность по времени игры
+#
+# Чем меньше наигранного времени — тем чувствительнее флаги.
+# Пороги (threshold) каждого флага умножаются на multiplier тира.
+# Например, threshold=10 с multiplier=0.25 → порог становится 3.
+#
+# Тиры (настраиваемые):
+#   newcomer  — <1ч          → x0.25 (суперчувствительный)
+#   beginner  — 1ч – 10ч     → x0.5
+#   regular   — 10ч – 50ч    → x0.75
+#   veteran   — 50ч – 200ч   → x1.0  (стандарт)
+#   elder     — >200ч        → x1.5  (наименее чувствительный)
+#
+# Данные берутся из таблицы sm_playtime_stats (total_minutes).
+# ============================================================
+playtime-sensitivity:
+  enabled: true
+  tiers:
+    newcomer:
+      max-minutes: 60
+      threshold-multiplier: 0.25
+    beginner:
+      max-minutes: 600
+      threshold-multiplier: 0.5
+    regular:
+      max-minutes: 3000
+      threshold-multiplier: 0.75
+    veteran:
+      max-minutes: 12000
+      threshold-multiplier: 1.0
+    elder:
+      threshold-multiplier: 1.5
+
+# ============================================================
+# Периодическое напоминание для первых 2 тиров (<10 часов)
+# Поддерживаются MiniMessage теги + &[MAIN]/&[SECONDARY] цвета SMPS
+# ============================================================
+playtime-reminder:
+  enabled: true
+  interval-seconds: 15
+  target-tiers: [newcomer, beginner]
+  # По умолчанию 10 часов (600 минут)
+  max-minutes: 600
+  message: "&[SECONDARY]Подсказка: используйте &[MAIN]/rtp &[SECONDARY]и прочитайте правила. До &[MAIN]10ч &[SECONDARY]осталось: <yellow>{hours_left}ч</yellow>."
+
+# ============================================================
+# Автобан — если на сервере нет администрации (smflags.menu),
+# после N срабатываний флага игрок будет забанен.
+# ============================================================
+auto-ban:
+  ban-reason: "Система сочла ваше поведение подозрительным, если не согласны с баном - откройте жалобу на сайте"
+  # Команда для бана. {player} и {reason} будут заменены
+  ban-command: "ban {player} {reason}"
+  rules:
+    villager_kill:
+      enabled: true
+      triggers: 5
+    container_break:
+      enabled: true
+      triggers: 10
+    wither_summon_overworld:
+      enabled: true
+      triggers: 7
+    wither_summon_nether:
+      enabled: true
+      triggers: 14
+    wither_summon_end:
+      enabled: true
+      triggers: 16
+    container_explosion:
+      enabled: true
+      triggers: 10
+
+# ============================================================
+# Флаги
+#
+# Каждый флаг может иметь секцию levels с уровнями опасности.
+# Не обязательно указывать все три уровня — можно указать только
+# те, которые нужны. Если levels отсутствует или ни один уровень
+# не подошёл — используется стандартный уровень из кода.
+#
+# Условия (condition):
+#   BELOW   — значение < value
+#   BETWEEN — значение >= value И <= second-value
+#   ABOVE   — значение > value
+# ============================================================
+flags:
+  tnt_inventory:
+    enabled: true
+    threshold: 32
+    # groups: [newcomer, beginner, regular, veteran, elder]  # Если не указано — работает для всех
+    levels:
+      low:
+        condition: BELOW
+        value: 32
+      medium:
+        condition: BETWEEN
+        value: 32
+        second-value: 128
+      high:
+        condition: ABOVE
+        value: 128
+
+  # Редкие предметы в инвентаре — срабатывает только для указанных групп
+  rare_item:
+    enabled: true
+    # Группы игроков, для которых срабатывает флаг (по времени игры)
+    # Доступные группы: newcomer, beginner, regular, veteran, elder
+    groups: [newcomer, beginner]
+
+    # ── Предметы (любое количество вызывает флаг, min-amount = 1) ──
+    items:
+      - ELYTRA
+      - NETHER_STAR
+      - DRAGON_EGG
+      - ENCHANTED_GOLDEN_APPLE
+      - TOTEM_OF_UNDYING
+      - BEACON
+      - DRAGON_HEAD
+      - HEART_OF_THE_SEA
+      - TRIDENT
+      # Алмазная броня и инструменты
+      - DIAMOND_HELMET
+      - DIAMOND_CHESTPLATE
+      - DIAMOND_LEGGINGS
+      - DIAMOND_BOOTS
+      - DIAMOND_SWORD
+      - DIAMOND_PICKAXE
+      - DIAMOND_AXE
+      - DIAMOND_SHOVEL
+      - DIAMOND_HOE
+      # Незеритовая броня и инструменты
+      - NETHERITE_HELMET
+      - NETHERITE_CHESTPLATE
+      - NETHERITE_LEGGINGS
+      - NETHERITE_BOOTS
+      - NETHERITE_SWORD
+      - NETHERITE_PICKAXE
+      - NETHERITE_AXE
+      - NETHERITE_SHOVEL
+      - NETHERITE_HOE
+      # Ценные предметы
+      - NETHERITE_INGOT
+      - NETHERITE_BLOCK
+
+    # ── Предметы с минимальным количеством ──
+    # Флаг сработает только если общее кол-во в инвентаре >= указанного
+    items-min-amount:
+      SPONGE: 16
+      WET_SPONGE: 16
+      IRON_BLOCK: 16
+      GOLD_BLOCK: 8
+      DIAMOND_BLOCK: 4
+
+    # ── Редкие зачарованные книги (зачарование:мин_уровень) ──
+    # Триггерится когда игрок получает книгу с указанным зачарованием на уровне >= мин_уровень
+    enchanted-books:
+      - "soul_speed:3"
+      - "protection:4"
+      - "unbreaking:3"
+      - "mending:1"
+      - "wind_burst:3"
+      - "swift_sneak:3"
+      - "efficiency:5"
+      - "sharpness:5"
+      - "fortune:3"
+      - "silk_touch:1"
+
+    # ── Зачарованные предметы (не книги) ──
+    # Предмет считается редким если имеет ЛЮБОЕ из перечисленных зачарований на указанном уровне
+    enchanted-items:
+      BOW:
+        - "power:5"
+        - "infinity:1"
+      CROSSBOW:
+        - "multishot:1"
+        - "quick_charge:3"
+
+    levels:
+      low:
+        condition: BELOW
+        value: 3
+      medium:
+        condition: BETWEEN
+        value: 3
+        second-value: 5
+      high:
+        condition: ABOVE
+        value: 5
+
+  lava_placement:
+    enabled: true
+    min-height: 70
+    # Нет value для уровней — используется стандартный уровень (LOW)
+
+  whitelist_add:
+    enabled: true
+    # Одиночное событие — только high
+    levels:
+      high:
+        condition: ABOVE
+        value: 0
+
+  op_grant:
+    enabled: true
+    # Одиночное событие — только high
+    levels:
+      high:
+        condition: ABOVE
+        value: 0
+
+  tnt_placement_overworld:
+    enabled: true
+    threshold: 10
+    time-window: 5
+    levels:
+      low:
+        condition: BELOW
+        value: 16
+      medium:
+        condition: BETWEEN
+        value: 16
+        second-value: 32
+      high:
+        condition: ABOVE
+        value: 32
+
+  tnt_placement_nether:
+    enabled: true
+    threshold: 32
+    time-window: 5
+    levels:
+      low:
+        condition: BELOW
+        value: 64
+      medium:
+        condition: ABOVE
+        value: 64
+
+  fire_ignite:
+    enabled: true
+    threshold: 20
+    time-window: 5
+    # groups: [newcomer, beginner, regular]  # Если не указано — работает для всех
+    levels:
+      low:
+        condition: BELOW
+        value: 30
+      medium:
+        condition: BETWEEN
+        value: 30
+        second-value: 50
+      high:
+        condition: ABOVE
+        value: 50
+
+  villager_kill:
+    enabled: true
+    threshold: 5
+    time-window: 5
+    levels:
+      medium:
+        condition: BELOW
+        value: 10
+      high:
+        condition: ABOVE
+        value: 9
+
+  pet_kill:
+    enabled: true
+    # Одиночное событие — всегда high
+    levels:
+      high:
+        condition: ABOVE
+        value: 0
+
+  end_crystal_explode:
+    enabled: true
+    threshold: 3
+    time-window: 5
+    levels:
+      low:
+        condition: BELOW
+        value: 3
+      medium:
+        condition: BETWEEN
+        value: 3
+        second-value: 6
+      high:
+        condition: ABOVE
+        value: 6
+
+  end_crystal_damage_entity:
+    enabled: true
+    threshold: 5
+    time-window: 5
+    levels:
+      low:
+        condition: BELOW
+        value: 5
+      medium:
+        condition: BETWEEN
+        value: 5
+        second-value: 10
+      high:
+        condition: ABOVE
+        value: 10
+
+  end_crystal_damage_player:
+    enabled: true
+    threshold: 2
+    time-window: 5
+    levels:
+      medium:
+        condition: BELOW
+        value: 4
+      high:
+        condition: ABOVE
+        value: 3
+
+  chat_spam:
+    enabled: true
+    threshold: 40
+    time-window: 1
+    levels:
+      low:
+        condition: BELOW
+        value: 40
+      medium:
+        condition: BETWEEN
+        value: 40
+        second-value: 70
+      high:
+        condition: ABOVE
+        value: 70
+
+  chat_repeat:
+    enabled: true
+    threshold: 10
+    time-window: 1
+    levels:
+      low:
+        condition: BELOW
+        value: 8
+      medium:
+        condition: BETWEEN
+        value: 8
+        second-value: 12
+      high:
+        condition: ABOVE
+        value: 12
+
+  ore_pickup:
+    enabled: true
+    threshold: 10
+    levels:
+      low:
+        condition: BELOW
+        value: 32
+      medium:
+        condition: BETWEEN
+        value: 32
+        second-value: 256
+      high:
+        condition: ABOVE
+        value: 255
+
+  ancient_debris_pickup:
+    enabled: true
+    threshold: 5
+    levels:
+      low:
+        condition: BELOW
+        value: 16
+      medium:
+        condition: ABOVE
+        value: 16
+
+  wither_container_destroy:
+    enabled: true
+    threshold: 1
+    levels:
+      medium:
+        condition: BELOW
+        value: 5
+      high:
+        condition: ABOVE
+        value: 4
+
+  container_break:
+    enabled: true
+    threshold: 8
+    time-window: 5
+    levels:
+      low:
+        condition: BELOW
+        value: 8
+      medium:
+        condition: BETWEEN
+        value: 8
+        second-value: 26
+      high:
+        condition: ABOVE
+        value: 26
+
+  shulker_break:
+    enabled: true
+    threshold: 30
+    time-window: 5
+    levels:
+      low:
+        condition: BELOW
+        value: 35
+      medium:
+        condition: BETWEEN
+        value: 35
+        second-value: 50
+      high:
+        condition: ABOVE
+        value: 50
+
+  player_kill:
+    enabled: true
+    threshold: 3
+    time-window: 5
+    levels:
+      medium:
+        condition: BELOW
+        value: 5
+      high:
+        condition: ABOVE
+        value: 4
+
+  container_explosion:
+    enabled: true
+    threshold: 8
+    levels:
+      medium:
+        condition: BELOW
+        value: 10
+      high:
+        condition: ABOVE
+        value: 9
+
+  container_burn:
+    enabled: true
+    # Одиночное событие — только high
+    levels:
+      high:
+        condition: ABOVE
+        value: 0
+
+  container_drop:
+    enabled: true
+    # Минимальное кол-во выброшенных предметов для срабатывания
+    threshold: 5
+    levels:
+      low:
+        condition: BELOW
+        value: 16
+      medium:
+        condition: BETWEEN
+        value: 16
+        second-value: 32
+      high:
+        condition: ABOVE
+        value: 32
+
+  big_data_item_interact:
+    enabled: true
+    # Минимальный score для срабатывания (score ~= размер/масштаб данных)
+    threshold: 1
+    # Книга считается подозрительной, если превышает любой из порогов
+    min-book-pages: 40
+    min-book-characters: 8000
+    bundle:
+      # Минимум подозрительных вложений в bundle для флага
+      min-suspicious-items: 4
+      # Альтернативно: суммарный score вложений
+      min-total-score: 30000
+      # Защита от слишком глубокого/большого сканирования
+      max-depth: 3
+      max-items-scan: 128
+    levels:
+      low:
+        condition: BELOW
+        value: 20000
+      medium:
+        condition: BETWEEN
+        value: 20000
+        second-value: 60000
+      high:
+        condition: ABOVE
+        value: 60000
+
+  wither_summon_overworld:
+    enabled: true
+    threshold: 2
+    time-window: 10
+    levels:
+      low:
+        condition: BELOW
+        value: 3
+      medium:
+        condition: ABOVE
+        value: 3
+
+  wither_summon_nether:
+    enabled: true
+    threshold: 5
+    time-window: 10
+    levels:
+      medium:
+        condition: BELOW
+        value: 3
+      high:
+        condition: ABOVE
+        value: 15
+
+  wither_summon_end:
+    enabled: true
+    threshold: 5
+    time-window: 10
+    levels:
+      high:
+        condition: ABOVE
+        value: 5
+
+  admin_ban:
+    enabled: true
+    threshold: 5
+    time-window: 5
+    levels:
+      low:
+        condition: BELOW
+        value: 5
+      medium:
+        condition: BETWEEN
+        value: 5
+        second-value: 10
+      high:
+        condition: ABOVE
+        value: 10
+
+  admin_warn:
+    enabled: true
+    threshold: 10
+    time-window: 5
+    levels:
+      low:
+        condition: BELOW
+        value: 12
+      medium:
+        condition: BETWEEN
+        value: 12
+        second-value: 20
+      high:
+        condition: ABOVE
+        value: 20
+
+  admin_mute:
+    enabled: true
+    threshold: 10
+    time-window: 5
+    levels:
+      low:
+        condition: BELOW
+        value: 12
+      medium:
+        condition: BETWEEN
+        value: 12
+        second-value: 20
+      high:
+        condition: ABOVE
+        value: 20
+
+  boat_chest_place:
+    enabled: true
+    # Одиночное событие — только high
+    levels:
+      low:
+        condition: BELOW
+        value: 3
+      medium:
+        condition: ABOVE
+        value: 3
+
+  boat_chest_enter:
+    enabled: true
+    levels:
+      low:
+        condition: BELOW
+        value: 3
+      medium:
+        condition: ABOVE
+        value: 3
+
+  boat_chest_exit:
+    enabled: true
+    levels:
+      low:
+        condition: BELOW
+        value: 3
+      medium:
+        condition: ABOVE
+        value: 3
+
+  boat_chest_interact:
+    enabled: true
+    levels:
+      low:
+        condition: BELOW
+        value: 3
+      medium:
+        condition: ABOVE
+        value: 3

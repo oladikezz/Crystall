@@ -1,0 +1,13 @@
+name: 'SM_Announces'
+version: 1.0.0
+author: '@deforce_'
+description: 'Console alerts with MiniMessage and SMPS colors'
+main: net.schalker.SMPS.modules.announces.AnnouncesModule
+permissions:
+  smannounces.consolealert:
+    description: Allows using /consolealert command
+    default: op
+  smannounces.consolelog:
+    description: Allows using /consolealertlog command
+    default: op
+

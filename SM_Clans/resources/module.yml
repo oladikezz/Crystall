@@ -1,0 +1,5 @@
+name: SM_Clans
+version: 4.1.0
+author: deforce_
+description: Clans module for SMPS. Created by deforce_
+main: site.deforce.SM_Clans.SM_Clans

@@ -1,0 +1,7 @@
+menus:
+  flags:
+    title: "&d&lФЛАГИ &7• &fСтраница {page}"
+  history:
+    title: "&d&lИСТОРИЯ &7• &f{player}"
+
+border-material: "LIGHT_GRAY_STAINED_GLASS_PANE"

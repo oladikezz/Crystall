@@ -1,0 +1,5 @@
+name: SM_Invsee
+version: 1.0.0
+author: SchalkerMC
+description: Просмотр и редактирование инвентаря игрока через меню /invsee
+main: net.schalker.SMPS.modules.invsee.InvseeModule

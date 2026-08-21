@@ -1,0 +1,10 @@
+keepinv:
+  only-player: "&[SECONDARY]Из консоли укажите ник: &[MAIN]/keepinv <ник>"
+  no-permission-others: "&[SECONDARY]У вас нет прав для изменения режима другим игрокам."
+  player-not-found: "&[SECONDARY]Игрок &[MAIN]{player} &[SECONDARY]не найден."
+  enabled-self: "&[SECONDARY]Режим keep inventory &[MAIN]включен&[SECONDARY]."
+  disabled-self: "&[SECONDARY]Режим keep inventory &[MAIN]выключен&[SECONDARY]."
+  enabled-other-sender: "&[SECONDARY]Для игрока &[MAIN]{player} &[SECONDARY]режим keep inventory &[MAIN]включен&[SECONDARY]."
+  disabled-other-sender: "&[SECONDARY]Для игрока &[MAIN]{player} &[SECONDARY]режим keep inventory &[MAIN]выключен&[SECONDARY]."
+  enabled-other-target: "&[SECONDARY]Вам включили режим keep inventory."
+  disabled-other-target: "&[SECONDARY]Вам выключили режим keep inventory."

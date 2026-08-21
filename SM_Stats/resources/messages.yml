@@ -1,0 +1,24 @@
+only-player: "&[SECONDARY]Эта команда доступна только в игре."
+no-permission: "&[SECONDARY]У вас нет прав."
+player-not-found: "&[SECONDARY]Игрок &[MAIN]{player} &[SECONDARY]не найден."
+db-not-ready: "&[SECONDARY]База данных недоступна."
+
+top:
+  invalid: "&[SECONDARY]Неизвестная метрика."
+
+reset:
+  usage: "&[SECONDARY]Использование: &[MAIN]/stats reset <ник|all confirm>"
+  confirm: "&[SECONDARY]Подтвердите: &[MAIN]/stats reset all confirm"
+  done: "&[SECONDARY]Статистика игрока &[MAIN]{player} &[SECONDARY]сброшена."
+  all-done: "&[SECONDARY]Вся статистика сброшена."
+
+reload:
+  done: "&[SECONDARY]Конфигурация модуля &[MAIN]SM_Stats &[SECONDARY]перезагружена."
+
+scan:
+  usage: "&[SECONDARY]Использование: &[MAIN]/statsadmin scan"
+  disabled-feature: "&[SECONDARY]Импорт из playerdata выключен в конфиге."
+  empty: "&[SECONDARY]Не найдено игроков для импорта."
+  started: "&[SECONDARY]Импорт из playerdata запущен. Игроков: &[MAIN]{total}&[SECONDARY]."
+  stopped: "&[SECONDARY]Импорт статистики из playerdata остановлен."
+  done: "&[SECONDARY]Импорт из playerdata завершён. Импортировано: &[MAIN]{count}&[SECONDARY]."

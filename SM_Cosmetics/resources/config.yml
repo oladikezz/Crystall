@@ -1,0 +1,6 @@
+﻿enabled: true
+update-interval-ticks: 2
+# Color palette for &[MAIN] and &[SECONDARY] placeholders
+colors:
+  MAIN: "&6"
+  SECONDARY: "&e"

@@ -1,0 +1,6 @@
+enabled: true
+
+recipe:
+  crafting-table: true
+  stonecutter: true
+  craft-amount: 8

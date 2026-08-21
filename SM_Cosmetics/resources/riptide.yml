@@ -1,0 +1,171 @@
+enabled: true
+
+cosmetics:
+  trident_riptide_bubble:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Riptide Bubble"
+    item: "minecraft:heart_of_the_sea"
+    trail_particle: "BUBBLE_POP"
+    hit_particle: "SPLASH"
+    trail_count: 4
+    hit_count: 8
+    hit_spread: 0.4
+    trail_sound: "entity.player.splash"
+    hit_sound: "entity.player.splash"
+
+  trident_riptide_sakura:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Riptide Sakura"
+    item: "minecraft:cherry_leaves"
+    trail_particle: "CHERRY_LEAVES"
+    hit_particle: "CHERRY_LEAVES"
+    trail_count: 5
+    hit_count: 12
+    hit_spread: 0.5
+    trail_sound: "block.cherry_leaves.fall"
+    hit_sound: "entity.player.levelup"
+
+  trident_riptide_cosmic:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Riptide Cosmic"
+    item: "minecraft:echo_shard"
+    trail_particle: "REVERSE_PORTAL"
+    hit_particle: "REVERSE_PORTAL"
+    trail_count: 6
+    hit_count: 14
+    hit_spread: 0.55
+    trail_sound: "block.portal.ambient"
+    hit_sound: "entity.ender_dragon.flap"
+
+  trident_riptide_tempest:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Riptide Tempest"
+    item: "minecraft:prismarine_shard"
+    trail_particle: "CLOUD"
+    hit_particle: "SPLASH"
+    trail_count: 6
+    hit_count: 12
+    hit_spread: 0.55
+    trail_sound: "entity.dolphin.splash"
+    hit_sound: "entity.drowned.swim"
+
+  trident_riptide_lumen:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Riptide Lumen"
+    item: "minecraft:sea_lantern"
+    trail_particle: "END_ROD"
+    hit_particle: "WAX_ON"
+    trail_count: 12
+    hit_count: 20
+    hit_spread: 0.75
+    trail_sound: "block.beacon.power_select"
+    hit_sound: "block.amethyst_block.chime"
+
+  trident_riptide_froststream:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Riptide Froststream"
+    item: "minecraft:packed_ice"
+    trail_particle: "SNOWFLAKE"
+    hit_particle: "SNOWFLAKE"
+    trail_count: 8
+    hit_count: 14
+    hit_spread: 0.6
+    trail_sound: "block.glass.break"
+    hit_sound: "block.amethyst_cluster.break"
+
+  trident_riptide_stormline:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Riptide Stormline"
+    item: "minecraft:lightning_rod"
+    trail_particle: "ELECTRIC_SPARK"
+    hit_particle: "FLASH"
+    trail_count: 8
+    hit_count: 14
+    hit_spread: 0.6
+    trail_sound: "entity.lightning_bolt.thunder"
+    hit_sound: "entity.lightning_bolt.impact"
+
+  trident_riptide_soulwake:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Riptide Soulwake"
+    item: "minecraft:soul_lantern"
+    trail_particle: "SOUL_FIRE_FLAME"
+    hit_particle: "SOUL"
+    trail_count: 8
+    hit_count: 14
+    hit_spread: 0.6
+    trail_sound: "block.soul_sand.step"
+    hit_sound: "entity.wither.hurt"
+
+  trident_riptide_rosewind:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Riptide Rosewind"
+    item: "minecraft:pink_dye"
+    trail_particle: "CHERRY_LEAVES"
+    hit_particle: "CHERRY_LEAVES"
+    trail_count: 8
+    hit_count: 14
+    hit_spread: 0.6
+    trail_sound: "block.cherry_leaves.fall"
+    hit_sound: "entity.player.levelup"
+
+  trident_riptide_dawn:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Riptide Dawn"
+    item: "minecraft:glowstone_dust"
+    trail_particle: "FLAME"
+    hit_particle: "LAVA"
+    trail_count: 7
+    hit_count: 12
+    hit_spread: 0.5
+    trail_sound: "item.firecharge.use"
+    hit_sound: "entity.blaze.shoot"
+
+  trident_riptide_ink:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Riptide Ink"
+    item: "minecraft:ink_sac"
+    trail_particle: "GLOW_SQUID_INK"
+    hit_particle: "SMOKE"
+    trail_count: 8
+    hit_count: 14
+    hit_spread: 0.6
+    trail_sound: "entity.glow_squid.squirt"
+    hit_sound: "entity.squid.squirt"
+
+  trident_riptide_starpath:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Riptide Starpath"
+    item: "minecraft:nether_star"
+    trail_particle: "END_ROD"
+    hit_particle: "END_ROD"
+    trail_count: 9
+    hit_count: 16
+    hit_spread: 0.65
+    trail_sound: "entity.firework_rocket.twinkle"
+    hit_sound: "entity.firework_rocket.large_blast"
+
+  trident_riptide_voidstream:
+    description: "&7Configurable effect description"
+    enabled: true
+    name: "Trident Riptide Voidstream"
+    item: "minecraft:crying_obsidian"
+    trail_particle: "REVERSE_PORTAL"
+    hit_particle: "REVERSE_PORTAL"
+    trail_count: 9
+    hit_count: 16
+    hit_spread: 0.65
+    trail_sound: "block.portal.ambient"
+    hit_sound: "block.respawn_anchor.deplete"
