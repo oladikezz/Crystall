@@ -1,0 +1,5 @@
+name: CM_TrafficOptimizer
+version: 1.0.0
+author: SchalkerMC
+description: Адаптивная оптимизация трафика по пингу игрока
+main: net.schalker.SMPS.modules.trafficoptimizer.TrafficOptimizerModule

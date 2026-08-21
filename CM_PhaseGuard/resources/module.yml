@@ -1,0 +1,5 @@
+name: CM_PhaseGuard
+version: 1.0.0
+author: DoIT
+description: Блокирует перемещение сквозь блоки (noclip / phase)
+main: net.schalker.SMPS.modules.phaseguard.PhaseGuardModule

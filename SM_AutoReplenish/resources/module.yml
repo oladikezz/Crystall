@@ -1,5 +1,0 @@
-name: SM_AutoReplenish
-version: 1.0.0
-author: Tenzorixx
-description: 'ПКМ мотыгой по полностью выросшему урожаю (пшеница, морковь, картофель, свёкла) собирает его и сразу засаживает заново'
-main: net.schalker.SMPS.modules.autoreplenish.AutoReplenishModule

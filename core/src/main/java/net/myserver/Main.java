@@ -108,7 +108,6 @@ public class Main {
         SleepSystem.register(globalEventHandler);
         CustomFishingSystem.register(globalEventHandler);
         ItemFrameMechanics.register(globalEventHandler);
-        PlayerHeadDropMechanic.register(globalEventHandler);
 
         // 7. Системы ядра (Безопасность, Фоновое сохранение, Очистка)
         AutoSaveSystem.register();

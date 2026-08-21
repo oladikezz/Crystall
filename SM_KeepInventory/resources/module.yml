@@ -1,5 +1,0 @@
-name: SM_KeepInventory
-version: 1.0.0
-author: MeXaNoBoP
-description: Переключаемое сохранение инвентаря при смерти
-main: net.schalker.SMPS.modules.keepinventory.KeepInventoryModule

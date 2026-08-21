@@ -1,0 +1,5 @@
+name: CM_Spit
+version: 1.0.0
+author: MeXaNoBoP
+description: Команда /spit для плевка ламы без урона
+main: net.schalker.SMPS.modules.spit.SpitModule

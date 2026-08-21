@@ -1,6 +1,0 @@
-name: SM_StonecutterAdditions
-version: 1.0.1
-author: '@deforce_'
-description: 'Adds missing stonecutter recipes for deepslate, wood, and other stone variants'
-main: net.schalker.SMPS.modules.stonecutter.StonecutterAdditionsModule
-

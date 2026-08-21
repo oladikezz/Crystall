@@ -1,7 +1,0 @@
-name: SM_StreamerMode
-version: 1.3.1
-author: MeXaNoBoP & nukshndev
-description: Streamer mode with LP group, channel link and chat filter
-main: net.schalker.SMPS.modules.streamermode.StreamerModeModule
-softdepend:
-  - LuckPerms

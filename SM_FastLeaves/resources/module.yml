@@ -1,5 +1,0 @@
-name: SM_FastLeaves
-version: 1.0.0
-author: Tenzorixx
-description: 'Листва деревьев, выращенных генерацией мира или саженцем, опадает, если рядом не осталось блоков дерева'
-main: net.schalker.SMPS.modules.fastleaves.FastLeavesModule

@@ -1,0 +1,5 @@
+name: CM_cosmetics
+version: 2.1.0
+author: TotalChaos01
+description: Cosmetics module for SMPS
+main: net.schalker.SMPS.modules.cosmetics.CosmeticsModule

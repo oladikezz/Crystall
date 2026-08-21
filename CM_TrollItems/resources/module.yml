@@ -1,0 +1,5 @@
+name: CM_TrollItems
+version: 1.0.0
+author: MeXaNoBoP
+description: 'Тролль-предметы: лук-крюк, наручники и гравитационная бомба, только для админов'
+main: net.schalker.SMPS.modules.trollitems.TrollItemsModule

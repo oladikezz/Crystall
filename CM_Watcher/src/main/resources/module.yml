@@ -1,0 +1,5 @@
+name: CM_Watcher
+version: 1.1.0
+author: ShaderCoder
+description: Смотрящий — лорная сущность-наблюдатель с ИИ и Telegram-управлением
+main: ru.lor.watcher.WatcherModule

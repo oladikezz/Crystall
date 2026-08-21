@@ -1,5 +1,0 @@
-name: SM_Accounts
-version: 1.2.2
-author: 'deforce_'
-description: 'Essential SMPS module for linking minecraft accounts with schalker.net accounts'
-main: site.deforce.SM_Accounts.SM_Accounts

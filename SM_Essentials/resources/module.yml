@@ -1,5 +1,0 @@
-name: SM_Essentials
-version: 2.0.0
-author: MeXaNoBoP
-description: Базовые команды сервера (телепорт)
-main: net.schalker.SMPS.modules.essentials.EssentialsModule

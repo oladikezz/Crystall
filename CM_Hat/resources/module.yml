@@ -1,0 +1,6 @@
+name: CM_Hat
+version: 1.0.0
+author: '@deforce_'
+description: 'Команда /hat'
+main: net.schalker.SMPS.modules.hat.HatModule
+

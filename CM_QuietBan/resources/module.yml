@@ -1,0 +1,5 @@
+name: CM_QuietBan
+version: 1.0.0
+author: SchalkerMC
+description: Теневой бан игроков с тремя уровнями и привязкой по IP
+main: net.schalker.SMPS.modules.quietban.QuietBanModule

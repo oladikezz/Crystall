@@ -108,44 +108,44 @@ project(":DoAPI") {
 // =====================================================================
 
 // ─── Pattern A: source files directly in module root ────────────────
-//     SM_Module/SomeClass.java
-//     SM_Module/commands/...
-//     SM_Module/resources/config.yml
+//     CM_Module/SomeClass.java
+//     CM_Module/commands/...
+//     CM_Module/resources/config.yml
 // ─────────────────────────────────────────────────────────────────────
 val flatModules = listOf(
-    "SM_Accounts",
-    "SM_Announces",
-    "SM_AdminList",
-    "SM_Alert",
-    "SM_AutoReplenish",
-    "SM_Checker",
-    "SM_Cosmetics",
-    "SM_Crowns",
-    "SM_DebugStick",
-    "SM_Essentials",
-    "SM_FastLeaves",
-    "SM_Flags",
-    "SM_Hat",
-    "SM_Help",
-    "SM_ItemMeta",
-    "SM_Lightcraft",
-    "SM_PlayerHeads",
-    "SM_QuietBan",
-    "SM_Spit",
-    "SM_Stats",
-    "SM_TrafficOptimizer",
-    "SM_UserInfo",
-    "SM_KeepInventory",
-    "SM_StreamerMode",
-    "SM_Voodoos",
-    "SM_StonecutterAdditions",
-    "SM_Marry",
-    "SM_Scale",
-    "SM_Invsee",
-    "SM_Clans",
-    "SM_TrollItems",
-    "SM_ItemDespawn",
-    "SM_PhaseGuard"
+    "CM_Accounts",
+    "CM_Announces",
+    "CM_AdminList",
+    "CM_Alert",
+    "CM_AutoReplenish",
+    "CM_Checker",
+    "CM_Cosmetics",
+    "CM_Crowns",
+    "CM_DebugStick",
+    "CM_Essentials",
+    "CM_FastLeaves",
+    "CM_Flags",
+    "CM_Hat",
+    "CM_Help",
+    "CM_ItemMeta",
+    "CM_Lightcraft",
+    "CM_PlayerHeads",
+    "CM_QuietBan",
+    "CM_Spit",
+    "CM_Stats",
+    "CM_TrafficOptimizer",
+    "CM_UserInfo",
+    "CM_KeepInventory",
+    "CM_StreamerMode",
+    "CM_Voodoos",
+    "CM_StonecutterAdditions",
+    "CM_Marry",
+    "CM_Scale",
+    "CM_Invsee",
+    "CM_Clans",
+    "CM_TrollItems",
+    "CM_ItemDespawn",
+    "CM_PhaseGuard"
 )
 
 flatModules.forEach { name ->
@@ -165,21 +165,21 @@ flatModules.forEach { name ->
 }
 
 // ─── Pattern B: standard Maven/Gradle layout (src/main/java) ───────
-//     SM_Module/src/main/java/...
-//     SM_Module/src/main/resources/...
+//     CM_Module/src/main/java/...
+//     CM_Module/src/main/resources/...
 // ─────────────────────────────────────────────────────────────────────
-// SM_Example uses the default layout so it needs no sourceSets override.
+// CM_Example uses the default layout so it needs no sourceSets override.
 
 // =====================================================================
 // Per-module extras (PlaceholderAPI, etc.)
 // =====================================================================
-project(":SM_Example") {
+project(":CM_Example") {
     dependencies {
         "compileOnly"("me.clip:placeholderapi:2.11.6")
     }
 }
 
-project(":SM_Watcher") {
+project(":CM_Watcher") {
     dependencies {
         "compileOnly"("com.github.retrooper:packetevents-spigot:2.7.0")
         "compileOnly"("com.google.code.gson:gson:2.11.0")
@@ -187,57 +187,57 @@ project(":SM_Watcher") {
     }
 }
 
-project(":SM_Announces") {
+project(":CM_Announces") {
     dependencies {
         "compileOnly"("net.kyori:adventure-text-minimessage:4.18.0")
     }
 }
 
-// ─── SM_QuietBan: injects a handler into the player's netty pipeline ─
+// ─── CM_QuietBan: injects a handler into the player's netty pipeline ─
 //     Netty itself ships with the server, so it stays compileOnly.
-project(":SM_QuietBan") {
+project(":CM_QuietBan") {
     dependencies {
         "compileOnly"("io.netty:netty-transport:4.2.7.Final")
     }
 }
 
-// ─── SM_TrafficOptimizer: ставит фильтр частиц в netty-пайплайн игрока ──
-project(":SM_TrafficOptimizer") {
+// ─── CM_TrafficOptimizer: ставит фильтр частиц в netty-пайплайн игрока ──
+project(":CM_TrafficOptimizer") {
     dependencies {
         "compileOnly"("io.netty:netty-transport:4.2.7.Final")
     }
 }
 
-project(":SM_Flags") {
+project(":CM_Flags") {
     dependencies {
         "compileOnly"("net.kyori:adventure-text-minimessage:4.18.0")
     }
 }
 
-project(":SM_Help") {
+project(":CM_Help") {
     dependencies {
         "compileOnly"("net.kyori:adventure-text-minimessage:4.18.0")
     }
 }
 
-project(":SM_StreamerMode") {
+project(":CM_StreamerMode") {
     dependencies {
         // StreamerMode targets the SMPS core installed on the server.
         "compileOnly"(files("${rootProject.projectDir}/libs/SMPS.jar"))
     }
 }
 
-project(":SM_Clans") {
+project(":CM_Clans") {
     dependencies {
         "compileOnly"("me.clip:placeholderapi:2.11.6")
         "compileOnly"("net.kyori:adventure-text-minimessage:4.18.0")
     }
 }
 
-// ─── SM_Vanish: TAB API is provided via stubs/ for compilation ──────
+// ─── CM_Vanish: TAB API is provided via stubs/ for compilation ──────
 //     The real classes come from the TAB plugin at runtime, so the
 //     stubs must never end up inside the module JAR.
-project(":SM_Vanish") {
+project(":CM_Vanish") {
     sourceSets {
         main {
             java {
@@ -259,8 +259,8 @@ project(":SM_Vanish") {
     }
 }
 
-// ─── SM_Accounts: bundles JDA via Shadow JAR ────────────────────────
-project(":SM_Accounts") {
+// ─── CM_Accounts: bundles JDA via Shadow JAR ────────────────────────
+project(":CM_Accounts") {
     apply(plugin = "com.gradleup.shadow")
 
     group = "site.deforce"
@@ -274,7 +274,7 @@ project(":SM_Accounts") {
     }
 
     tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
-        archiveBaseName.set("SM_Accounts")
+        archiveBaseName.set("CM_Accounts")
         archiveVersion.set(provider { project.version.toString() })
         archiveClassifier.set("")
         destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
@@ -290,7 +290,7 @@ project(":SM_Accounts") {
         // Do NOT use minimize() — JDA loads many classes via reflection/events
     }
 
-    // Replace the standard jar task with shadowJar so :SM_Accounts:jar just works
+    // Replace the standard jar task with shadowJar so :CM_Accounts:jar just works
     tasks.jar {
         actions.clear()
         dependsOn("shadowJar")
@@ -300,10 +300,10 @@ project(":SM_Accounts") {
     }
 }
 
-// ─── SM_UCosmetics: UltraCosmetics fork as SMPS module ──────────────
-// Source layout: SM_UCosmetics/be/isach/ultracosmetics/...
-// Resources:     SM_UCosmetics/resources/...
-project(":SM_UCosmetics") {
+// ─── CM_UCosmetics: UltraCosmetics fork as SMPS module ──────────────
+// Source layout: CM_UCosmetics/be/isach/ultracosmetics/...
+// Resources:     CM_UCosmetics/resources/...
+project(":CM_UCosmetics") {
     apply(plugin = "com.gradleup.shadow")
 
     repositories {
@@ -371,7 +371,7 @@ project(":SM_UCosmetics") {
     }
 
     tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
-        archiveBaseName.set("SM_UCosmetics")
+        archiveBaseName.set("CM_UCosmetics")
         archiveVersion.set(provider { project.version.toString() })
         archiveClassifier.set("")
         destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
@@ -394,10 +394,10 @@ project(":SM_UCosmetics") {
 // =====================================================================
 // build_all — build everything and collect the JARs in one folder
 // =====================================================================
-// SM_UCosmetics is missing most of the upstream UltraCosmetics source tree
+// CM_UCosmetics is missing most of the upstream UltraCosmetics source tree
 // (be.isach.ultracosmetics.{player,config,cosmetics,listeners,menu,run,version,worldguard}),
 // so it cannot compile. It is skipped so one broken module does not block the other 26.
-val modulesExcludedFromBuildAll = setOf("SM_UCosmetics", "core")
+val modulesExcludedFromBuildAll = setOf("CM_UCosmetics", "core")
 
 val buildAll = tasks.register<Sync>("build_all") {
     group = "build"
