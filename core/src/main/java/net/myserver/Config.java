@@ -37,6 +37,23 @@ public class Config {
     public int webMapPort = 8080;
     public boolean webMapHideCoordinates = false;
 
+    // Modules Settings
+    public Map<String, Object> moduleSettings = new java.util.HashMap<>();
+
+    public boolean isModuleEnabled(String moduleId, boolean defaultValue) {
+        if (moduleSettings.containsKey(moduleId)) {
+            Object val = moduleSettings.get(moduleId);
+            if (val instanceof Boolean b) return b;
+            if (val instanceof Map<?, ?> map && map.containsKey("enabled")) {
+                Object enabledVal = map.get("enabled");
+                if (enabledVal instanceof Boolean b) return b;
+                return Boolean.parseBoolean(String.valueOf(enabledVal));
+            }
+            return Boolean.parseBoolean(String.valueOf(val));
+        }
+        return defaultValue;
+    }
+
     public static Config load(String path) {
         Config config = new Config();
         File file = new File(path);
@@ -102,6 +119,11 @@ public class Config {
                 }
                 if (data.containsKey("web_map_hide_coordinates")) {
                     config.webMapHideCoordinates = Boolean.parseBoolean(String.valueOf(data.get("web_map_hide_coordinates")));
+                }
+                if (data.containsKey("modules") && data.get("modules") instanceof Map<?, ?> mods) {
+                    for (Map.Entry<?, ?> entry : mods.entrySet()) {
+                        config.moduleSettings.put(String.valueOf(entry.getKey()).toLowerCase(), entry.getValue());
+                    }
                 }
             }
         } catch (Exception e) {

@@ -1,6 +1,0 @@
-name: CM_Help
-version: 1.0.0
-author: '@deforce_'
-description: 'Replace /help with configurable MiniMessage text'
-main: net.schalker.SMPS.modules.help.HelpModule
-

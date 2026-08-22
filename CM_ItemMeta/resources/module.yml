@@ -1,5 +1,0 @@
-name: CM_ItemMeta
-version: 1.0.0
-author: MeXaNoBoP
-description: Изменение названия и лора предметов через команды
-main: net.schalker.SMPS.modules.itemmeta.ItemMetaModule

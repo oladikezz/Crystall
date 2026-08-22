@@ -1,6 +1,0 @@
-only-player: "&[SECONDARY]Эта команда доступна только в игре."
-no-permission: "&[SECONDARY]У вас нет прав."
-db-not-ready: "&[SECONDARY]База данных недоступна."
-unknown-command: "&[SECONDARY]Неизвестная подкоманда. Используйте &[MAIN]/flags &[SECONDARY]для открытия меню."
-reload-done: "&[SECONDARY]Конфигурация модуля &[MAIN]SM_Flags &[SECONDARY]перезагружена."
-history-empty: "&[SECONDARY]История флагов пуста."

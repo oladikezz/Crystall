@@ -119,6 +119,9 @@ public class Main {
         SecuritySystem.register(globalEventHandler);
         CleanupSystem.register(globalEventHandler);
 
+        // 8. Инициализация всех 35 встроенных модулей ядра Crystall
+        net.myserver.modules.CrystallModuleManager.init(globalEventHandler, config);
+
         // Умная выгрузка неиспользуемых чанков с периодом покоя (Grace Period 30 сек)
         final Map<Chunk, Long> emptyChunkTimers = new ConcurrentHashMap<>();
         MinecraftServer.getSchedulerManager().buildTask(() -> {
@@ -204,6 +207,7 @@ public class Main {
             regionChunkLoader.closeAll();
             WebMapServer.stop();
             RestApiManager.stop();
+            net.myserver.modules.CrystallModuleManager.disableAll();
             DatabaseManager.shutdown();
             MinecraftServer.stopCleanly();
             log.info("Server stopped.");

@@ -1,5 +1,0 @@
-name: CM_Alert
-version: 1.0.0
-author: MeXaNoBoP
-description: Настройка логов админских команд через меню
-main: net.schalker.SMPS.modules.alert.AlertModule

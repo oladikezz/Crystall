@@ -1,4 +1,4 @@
-name: Crystall Core & CMPS CI/CD
+name: Crystall Core CI/CD
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   build-and-test:
-    name: Build Core & All 35 Modules (Java 25)
+    name: Build Crystall Core & 35 Modules (Java 25)
     runs-on: ubuntu-latest
     
     steps:
@@ -25,17 +25,11 @@ jobs:
     - name: Grant Execute Permissions to Gradle Wrapper
       run: chmod +x gradlew
       
-    - name: Build Core and All Modules
-      run: ./gradlew build_all :core:jar --no-daemon
+    - name: Build Fat Release JAR
+      run: ./gradlew :core:jar --no-daemon
       
     - name: Upload Core Release Artifact
       uses: actions/upload-artifact@v4
       with:
         name: crystall-core-1.0.0
         path: core/build/libs/crystall-core-1.0.0.jar
-
-    - name: Upload CMPS Modules Release Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: cmps-modules-dist
-        path: build/dist/

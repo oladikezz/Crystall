@@ -1,8 +1,0 @@
-# ItemMeta module configuration
-settings: {}
-
-commands:
-  itemname:
-    enabled: true
-  itemlore:
-    enabled: true

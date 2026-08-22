@@ -32,3 +32,43 @@ resource_pack_required: false
 web_map_enabled: true
 web_map_port: 8080
 web_map_hide_coordinates: false
+
+# ======================================================================
+#             🧩 Встроенные модули Crystall Core (35 Modules)
+# ======================================================================
+modules:
+  accounts: true
+  adminlist: true
+  alert: true
+  announces: true
+  autoreplenish: true
+  checker: true
+  clans: true
+  cosmetics: true
+  crowns: true
+  debugstick: true
+  essentials: true
+  fastleaves: true
+  flags: true
+  hat: true
+  help: true
+  invsee: true
+  itemdespawn: true
+  itemmeta: true
+  keepinventory: true
+  lightcraft: true
+  marry: true
+  phaseguard: true
+  playerheads: true
+  quietban: true
+  scale: true
+  spit: true
+  stats: true
+  stonecutter: true
+  streamermode: true
+  trafficoptimizer: true
+  trollitems: true
+  userinfo: true
+  vanish: true
+  voodoos: true
+  watcher: true
