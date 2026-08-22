@@ -25,7 +25,7 @@ public class RegionChunkLoader implements ChunkLoader {
     private static final Logger log = LoggerFactory.getLogger(RegionChunkLoader.class);
     private static final int SECTOR_HEADER_SIZE = 8192; // 1024 * 8 байт (offset: int, size: int)
     private static final int TOTAL_SECTIONS = 24;       // от Y=-64 до Y=320 (384 / 16 = 24 секции)
-    private static final int BUFFER_SIZE = 65536;       // 64 КБ буфер для сжатия
+    private static final int BUFFER_SIZE = 262144;      // 256 КБ буфер для сжатия
 
     private final File regionFolder;
     private final Map<Long, RegionFile> openRegions = new ConcurrentHashMap<>();

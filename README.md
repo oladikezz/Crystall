@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/badge/Java-25%2B-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java 25"/>
   <img src="https://img.shields.io/badge/TPS-20.0%20Rock%20Solid-4CAF50?style=for-the-badge" alt="20 TPS"/>
   <img src="https://img.shields.io/badge/Engine-Minestom%20%7C%20DoAPI-00BCD4?style=for-the-badge" alt="Minestom + DoAPI"/>
-  <img src="https://img.shields.io/badge/Modules-36%20Active%20Modules-FF5722?style=for-the-badge" alt="36 Modules"/>
+  <img src="https://img.shields.io/badge/Modules-35%20Active%20Modules-FF5722?style=for-the-badge" alt="35 Modules"/>
 </p>
 
 ---
@@ -14,7 +14,7 @@
 Данный репозиторий объединяет два мощных технологических стека для высоконагруженных Minecraft-серверов нового поколения:
 
 1. **💎 Crystall Core (`:core`)** — Сверхпроизводительное, чистое автономное ядро на базе **Minestom (2026)** с пространственным $O(1)$ хэшированием, 32×32 регионным хранилищем, адаптивным LOD-тикингом и Zero-GC структурами (удерживает **20.0 TPS при 2000+ мобов** при **<100 МБ ОЗУ**).
-2. **🧩 DoAPI & CMPS (`:DoAPI` + 36 Модулей)** — Модульная фреймворк-система горячей загрузки и управления плагинами/модулями на лету без перезагрузки сервера.
+2. **🧩 DoAPI & CMPS (`:DoAPI` + 35 Модулей)** — Модульная фреймворк-система горячей загрузки и управления плагинами/модулями на лету без перезагрузки сервера.
 
 ---
 

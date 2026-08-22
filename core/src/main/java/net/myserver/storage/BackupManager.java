@@ -2,6 +2,8 @@ package net.myserver.storage;
 
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.timer.TaskSchedule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.*;
@@ -13,6 +15,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class BackupManager {
+    private static final Logger log = LoggerFactory.getLogger(BackupManager.class);
     private static final File BACKUP_DIR = new File("backups");
     private static final int MAX_BACKUPS = 5;
 
@@ -20,13 +23,13 @@ public class BackupManager {
         if (!BACKUP_DIR.exists()) BACKUP_DIR.mkdirs();
 
         MinecraftServer.getSchedulerManager().buildTask(() -> {
-            System.out.println("Starting scheduled backup...");
+            log.info("[BackupManager] Starting scheduled world backup...");
             try {
                 createBackup();
                 rotateBackups();
-                System.out.println("Backup completed successfully.");
+                log.info("[BackupManager] World backup completed successfully.");
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("[BackupManager] Error during world backup: {}", e.getMessage(), e);
             }
         }).repeat(TaskSchedule.minutes(60)).schedule();
     }
@@ -41,13 +44,13 @@ public class BackupManager {
             Files.walk(sourceDir.toPath())
                  .filter(path -> !Files.isDirectory(path))
                  .forEach(path -> {
-                     ZipEntry zipEntry = new ZipEntry(sourceDir.toPath().relativize(path).toString());
+                     ZipEntry zipEntry = new ZipEntry(sourceDir.toPath().relativize(path).toString().replace('\\', '/'));
                      try {
                          zos.putNextEntry(zipEntry);
                          Files.copy(path, zos);
                          zos.closeEntry();
                      } catch (IOException e) {
-                         e.printStackTrace();
+                         log.warn("[BackupManager] Failed to compress file {}: {}", path, e.getMessage());
                      }
                  });
         }

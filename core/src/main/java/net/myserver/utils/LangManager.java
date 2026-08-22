@@ -8,9 +8,9 @@ import net.minestom.server.entity.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +34,7 @@ public class LangManager {
         if (files != null) {
             for (File file : files) {
                 String localeName = file.getName().replace(".json", "").toLowerCase();
-                try (FileReader reader = new FileReader(file)) {
+                try (Reader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
                     Type type = new TypeToken<Map<String, String>>(){}.getType();
                     Map<String, String> translations = gson.fromJson(reader, type);
                     if (translations != null) {

@@ -300,104 +300,10 @@ project(":CM_Accounts") {
     }
 }
 
-// ─── CM_UCosmetics: UltraCosmetics fork as SMPS module ──────────────
-// Source layout: CM_UCosmetics/be/isach/ultracosmetics/...
-// Resources:     CM_UCosmetics/resources/...
-project(":CM_UCosmetics") {
-    apply(plugin = "com.gradleup.shadow")
-
-    repositories {
-        maven("https://repo.codemc.io/repository/maven-public/") { name = "codemc" }        // AnvilGUI
-        maven("https://maven.enginehub.org/repo/") { name = "enginehub" }                     // WorldGuard/WorldEdit
-    }
-
-    // WorldGuard + WorldEdit have strict version constraints that clash with Paper.
-    // Force them off so Paper's versions win.
-    configurations.all {
-        resolutionStrategy {
-            force("com.google.guava:guava:33.3.1-jre")
-            force("com.google.code.gson:gson:2.11.0")
-            force("it.unimi.dsi:fastutil:8.5.15")
-        }
-    }
-
-    sourceSets {
-        main {
-            java {
-                setSrcDirs(listOf(project.projectDir, "${project.projectDir}/stubs"))
-                exclude(
-                    "resources/**", "build/**", "bin/**", ".gradle/**", "gradle/**", "libs/**",
-                    // Original UltraCosmetics source — reference only, not compiled
-                    "UltraCosmetics-main/**",
-                    // NMS module — requires server internals, compiled separately or loaded at runtime
-                    "be/isach/ultracosmetics/v1_21_R7/**"
-                )
-            }
-            resources {
-                setSrcDirs(listOf("${project.projectDir}/resources"))
-            }
-        }
-    }
-
-    dependencies {
-        // XSeries — cross-version Bukkit utilities
-        "implementation"("com.github.cryptomorin:XSeries:13.1.0")
-        // Adventure platform for Bukkit (BukkitAudiences)
-        "implementation"("net.kyori:adventure-platform-bukkit:4.3.4")
-        "implementation"("net.kyori:adventure-text-minimessage:4.18.0")
-        "implementation"("net.kyori:adventure-text-serializer-legacy:4.18.0")
-        "implementation"("net.kyori:adventure-text-serializer-plain:4.18.0")
-        // AnvilGUI for pet rename
-        "implementation"("net.wesjd:anvilgui:1.10.3-SNAPSHOT")
-        // WorldGuard + WorldEdit for region-based cosmetic control (compileOnly — runtime optional)
-        "compileOnly"("com.sk89q.worldguard:worldguard-bukkit:7.0.12") {
-            isTransitive = false
-        }
-        "compileOnly"("com.sk89q.worldguard:worldguard-core:7.0.12") {
-            isTransitive = false
-        }
-        "compileOnly"("com.sk89q.worldedit:worldedit-bukkit:7.3.10") {
-            isTransitive = false
-        }
-        "compileOnly"("com.sk89q.worldedit:worldedit-core:7.3.10") {
-            isTransitive = false
-        }
-        // MobChip 1.10.1 — pet pathfinding AI (local JAR, shaded into the module JAR)
-        "implementation"(files("${rootProject.projectDir}/libs/mobchip.jar"))
-        // LibsDisguises is provided via stubs/ for compilation.
-        // Actual classes come from server plugins at runtime.
-        // PlaceholderAPI (compileOnly — runtime optional)
-        "compileOnly"("me.clip:placeholderapi:2.11.6")
-    }
-
-    tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
-        archiveBaseName.set("CM_UCosmetics")
-        archiveVersion.set(provider { project.version.toString() })
-        archiveClassifier.set("")
-        destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
-
-        // Relocate shaded libs to avoid conflicts
-        relocate("com.cryptomorin.xseries", "be.isach.ultracosmetics.shaded.xseries")
-        relocate("net.wesjd.anvilgui", "be.isach.ultracosmetics.shaded.anvilgui")
-
-        // Exclude compile-only stubs (real classes provided at runtime by server plugins)
-        exclude("me/libraryaddict/**")
-    }
-
-    tasks.jar {
-        actions.clear()
-        dependsOn("shadowJar")
-        doLast { /* shadowJar already produced the output */ }
-    }
-}
-
 // =====================================================================
 // build_all — build everything and collect the JARs in one folder
 // =====================================================================
-// CM_UCosmetics is missing most of the upstream UltraCosmetics source tree
-// (be.isach.ultracosmetics.{player,config,cosmetics,listeners,menu,run,version,worldguard}),
-// so it cannot compile. It is skipped so one broken module does not block the other 26.
-val modulesExcludedFromBuildAll = setOf("CM_UCosmetics", "core")
+val modulesExcludedFromBuildAll = setOf("core")
 
 val buildAll = tasks.register<Sync>("build_all") {
     group = "build"

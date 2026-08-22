@@ -21,7 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 public class CosmeticsModule extends BaseModule {
-    public static final String MODULE_NAME = "SM_cosmetics";
+    public static final String MODULE_NAME = "CM_cosmetics";
 
     private CosmeticsManager cosmeticsManager;
     private UserCosmeticsManager userCosmeticsManager;

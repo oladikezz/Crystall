@@ -370,7 +370,7 @@ public class ClanCreationListener extends BaseListener {
       if (text == null) {
          return "";
       } else {
-         String noLegacy = text.replaceAll("(?i)[&Â§][0-9a-fk-orx]", "");
+         String noLegacy = text.replaceAll("(?i)[&§][0-9a-fk-orx]", "");
          return noLegacy.replaceAll("(?i)(?:&#|#)[0-9a-f]{6}", "");
       }
    }

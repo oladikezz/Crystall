@@ -26,6 +26,7 @@ services:
     ports:
       - "25565:25565"
       - "25566:25566"  # REST API + Prometheus metrics
+      - "8080:8080"    # WebMap Live Map Server
     volumes:
       - ./config.yml:/app/config.yml
       - ./plugins:/app/plugins

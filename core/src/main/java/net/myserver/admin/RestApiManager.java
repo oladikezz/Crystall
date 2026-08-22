@@ -13,23 +13,29 @@ import net.myserver.engine.FastMath;
 import net.myserver.engine.PerformanceMonitor;
 import net.myserver.network.StressTestRunner;
 import net.myserver.utils.FastNoiseLite;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 public class RestApiManager {
+    private static final Logger log = LoggerFactory.getLogger(RestApiManager.class);
     private static final int PORT = 25566;
     private static final Gson gson = new Gson();
+    private static HttpServer server;
 
     public static void init() {
         try {
-            HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
+            server = HttpServer.create(new InetSocketAddress(PORT), 0);
 
-            // Основной статус
+            // Основной статус сервера
             server.createContext("/api/status", exchange -> {
                 JsonObject response = new JsonObject();
                 response.addProperty("online", MinecraftServer.getConnectionManager().getOnlinePlayers().size());
@@ -125,6 +131,7 @@ public class RestApiManager {
                 sendJsonResponse(exchange, response);
             });
 
+            // Список игроков онлайн
             server.createContext("/api/players", exchange -> {
                 JsonArray players = new JsonArray();
                 for (Player player : MinecraftServer.getConnectionManager().getOnlinePlayers()) {
@@ -138,29 +145,42 @@ public class RestApiManager {
                 sendJsonResponse(exchange, players);
             });
 
+            // Метрики Prometheus
             server.createContext("/metrics", exchange -> {
                 String metrics = MetricsExporter.generateMetrics();
                 exchange.getResponseHeaders().set("Content-Type", "text/plain; version=0.0.4; charset=utf-8");
-                byte[] bytes = metrics.getBytes();
+                byte[] bytes = metrics.getBytes(StandardCharsets.UTF_8);
                 exchange.sendResponseHeaders(200, bytes.length);
                 try (OutputStream os = exchange.getResponseBody()) {
                     os.write(bytes);
                 }
             });
 
-            server.setExecutor(null);
+            // Использование виртуальных потоков Java 25 для неблокирующей обработки
+            server.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
             server.start();
-            System.out.println("REST API Monitor started on port " + PORT);
+            log.info("[RestAPI] REST API Monitor and Metrics server started on port {}", PORT);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("[RestAPI] Failed to start REST API Monitor on port {}: {}", PORT, e.getMessage(), e);
+        }
+    }
+
+    public static void stop() {
+        if (server != null) {
+            try {
+                server.stop(0);
+                log.info("[RestAPI] REST API Monitor stopped gracefully.");
+            } catch (Exception e) {
+                log.warn("[RestAPI] Error stopping REST API server: {}", e.getMessage());
+            }
         }
     }
 
     private static void sendJsonResponse(com.sun.net.httpserver.HttpExchange exchange, Object data) throws IOException {
         String resStr = gson.toJson(data);
-        byte[] bytes = resStr.getBytes();
-        exchange.getResponseHeaders().set("Content-Type", "application/json");
+        byte[] bytes = resStr.getBytes(StandardCharsets.UTF_8);
+        exchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8");
         exchange.sendResponseHeaders(200, bytes.length);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(bytes);

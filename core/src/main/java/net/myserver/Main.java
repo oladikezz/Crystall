@@ -93,6 +93,7 @@ public class Main {
         instanceContainer.setGenerator(new CustomGenerator(12345));
 
         DimensionManager.init(instanceContainer);
+        DimensionManager.register(globalEventHandler);
 
         // 6. Базовые ванильные механики Minecraft
         WeatherTimeSystem.register(globalEventHandler, instanceContainer);
@@ -202,6 +203,7 @@ public class Main {
 
             regionChunkLoader.closeAll();
             WebMapServer.stop();
+            RestApiManager.stop();
             DatabaseManager.shutdown();
             MinecraftServer.stopCleanly();
             log.info("Server stopped.");

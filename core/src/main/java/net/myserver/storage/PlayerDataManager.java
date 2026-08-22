@@ -17,9 +17,8 @@ import net.minestom.server.utils.Unit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class PlayerDataManager {
         if (player == null) return;
         File file = new File(DATA_DIR, player.getUuid().toString() + ".json");
 
-        try (FileWriter writer = new FileWriter(file)) {
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
             JsonObject json = new JsonObject();
             json.addProperty("username", player.getUsername());
             json.addProperty("gamemode", player.getGameMode().name());
@@ -83,7 +82,7 @@ public class PlayerDataManager {
         File file = new File(DATA_DIR, player.getUuid().toString() + ".json");
         if (!file.exists()) return false;
 
-        try (FileReader reader = new FileReader(file)) {
+        try (Reader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
             JsonObject json = gson.fromJson(reader, JsonObject.class);
             if (json == null) return false;
 

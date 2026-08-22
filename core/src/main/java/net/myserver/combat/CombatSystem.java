@@ -61,7 +61,12 @@ public class CombatSystem {
                 float finalDamage = Math.max(0.5f, baseDamage * (1.0f - reduction));
 
                 float currentHp = livingTarget.getHealth();
-                livingTarget.setHealth(Math.max(0.0f, currentHp - finalDamage));
+                float newHp = currentHp - finalDamage;
+                if (newHp <= 0.0f) {
+                    livingTarget.kill();
+                } else {
+                    livingTarget.setHealth(newHp);
+                }
 
                 // Knockback
                 float yaw = attacker.getPosition().yaw();

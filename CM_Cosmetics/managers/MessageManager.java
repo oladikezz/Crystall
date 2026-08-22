@@ -25,12 +25,12 @@ public class MessageManager {
     }
 
     public void reload() {
-        YamlConfiguration config = this.plugin.getModuleManager().loadModuleConfig("SM_cosmetics", "messages.yml");
+        YamlConfiguration config = this.plugin.getModuleManager().loadModuleConfig("CM_cosmetics", "messages.yml");
         this.prefix = config != null ? config.getString("prefix", "&6[&eCosmetics&6]&r ") : "&6[&eCosmetics&6]&r ";
     }
 
     public String getRaw(String key) {
-        YamlConfiguration config = this.plugin.getModuleManager().loadModuleConfig("SM_cosmetics", "messages.yml");
+        YamlConfiguration config = this.plugin.getModuleManager().loadModuleConfig("CM_cosmetics", "messages.yml");
         if (config == null) {
             return key;
         }
@@ -114,15 +114,7 @@ public class MessageManager {
     }
 
     private String decodeMojibake(String text) {
-        if (text == null || !(text.contains("Ã") || text.contains("Ã‘") || text.contains("Ã¢") || text.contains("Ãƒ"))) {
-            return this.sanitize(text);
-        }
-        try {
-            byte[] bytes = text.getBytes(Charset.forName("Windows-1252"));
-            return this.sanitize(new String(bytes, StandardCharsets.UTF_8));
-        } catch (Exception ignored) {
-            return this.sanitize(text);
-        }
+        return text;
     }
 
     private String sanitize(String text) {
@@ -131,22 +123,22 @@ public class MessageManager {
         }
         return text
             .replace("\uFFFD", "")
-            .replace("âš™ ", "")
-            .replace("âœ– ", "")
-            .replace("âœ“ ", "")
-            .replace("â—‰ ", "")
-            .replace("â—Ž ", "")
-            .replace("â—ˆ ", "")
+            .replace("⚙ ", "")
+            .replace("✖ ", "")
+            .replace("✓ ", "")
+            .replace("◉ ", "")
+            .replace("◎ ", "")
+            .replace("◈ ", "")
             .replace("â† ", "")
-            .replace(" â†’", "")
-            .replace("â†’ ", "");
+            .replace(" →", "")
+            .replace("→ ", "");
     }
 
     private String resolveNamedColors(String text) {
         if (text == null || text.isEmpty()) {
             return text;
         }
-        YamlConfiguration moduleConfig = this.plugin.getModuleManager().loadModuleConfig("SM_cosmetics", "config.yml");
+        YamlConfiguration moduleConfig = this.plugin.getModuleManager().loadModuleConfig("CM_cosmetics", "config.yml");
         FileConfiguration config = this.plugin.getConfigManager().getConfig();
         if (moduleConfig == null && config == null) {
             return text;

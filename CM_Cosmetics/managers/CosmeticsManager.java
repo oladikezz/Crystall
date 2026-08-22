@@ -117,7 +117,7 @@ public class CosmeticsManager {
     }
 
     private int loadPets() {
-        YamlConfiguration config = this.plugin.getModuleManager().loadModuleConfig("SM_cosmetics", "pets.yml");
+        YamlConfiguration config = this.plugin.getModuleManager().loadModuleConfig("CM_cosmetics", "pets.yml");
         if (config == null) {
             this.debug("\u00d0\u0161\u00d0\u00be\u00d0\u00bd\u00d1\u201e\u00d0\u00b8\u00d0\u00b3 \u00d0\u00bf\u00d0\u00b8\u00d1\u201a\u00d0\u00be\u00d0\u00bc\u00d1\u2020\u00d0\u00b5\u00d0\u00b2 \u00d0\u00bd\u00d0\u00b5 \u00d0\u00bd\u00d0\u00b0\u00d0\u00b9\u00d0\u00b4\u00d0\u00b5\u00d0\u00bd");
             return 0;
@@ -162,7 +162,7 @@ public class CosmeticsManager {
     }
 
     private int loadParticleEffects() {
-        YamlConfiguration config = this.plugin.getModuleManager().loadModuleConfig("SM_cosmetics", "particles.yml");
+        YamlConfiguration config = this.plugin.getModuleManager().loadModuleConfig("CM_cosmetics", "particles.yml");
         if (config == null) {
             this.debug("\u00d0\u0161\u00d0\u00be\u00d0\u00bd\u00d1\u201e\u00d0\u00b8\u00d0\u00b3 \u00d1\u2021\u00d0\u00b0\u00d1\u0081\u00d1\u201a\u00d0\u00b8\u00d1\u2020 \u00d0\u00bd\u00d0\u00b5 \u00d0\u00bd\u00d0\u00b0\u00d0\u00b9\u00d0\u00b4\u00d0\u00b5\u00d0\u00bd");
             return 0;
@@ -222,7 +222,7 @@ public class CosmeticsManager {
     }
 
     private int loadArrowEffects() {
-        YamlConfiguration config = this.plugin.getModuleManager().loadModuleConfig("SM_cosmetics", "arrows.yml");
+        YamlConfiguration config = this.plugin.getModuleManager().loadModuleConfig("CM_cosmetics", "arrows.yml");
         if (config == null) {
             this.debug("\u00d0\u0161\u00d0\u00be\u00d0\u00bd\u00d1\u201e\u00d0\u00b8\u00d0\u00b3 \u00d1\u008d\u00d1\u201e\u00d1\u201e\u00d0\u00b5\u00d0\u00ba\u00d1\u201a\u00d0\u00be\u00d0\u00b2 \u00d1\u0081\u00d1\u201a\u00d1\u20ac\u00d0\u00b5\u00d0\u00bb \u00d0\u00bd\u00d0\u00b5 \u00d0\u00bd\u00d0\u00b0\u00d0\u00b9\u00d0\u00b4\u00d0\u00b5\u00d0\u00bd");
             return 0;
@@ -278,7 +278,7 @@ public class CosmeticsManager {
     }
 
     private int loadBalloons() {
-        YamlConfiguration config = this.plugin.getModuleManager().loadModuleConfig("SM_cosmetics", "balloons.yml");
+        YamlConfiguration config = this.plugin.getModuleManager().loadModuleConfig("CM_cosmetics", "balloons.yml");
         if (config == null) {
             this.debug("\u00d0\u0161\u00d0\u00be\u00d0\u00bd\u00d1\u201e\u00d0\u00b8\u00d0\u00b3 \u00d0\u00b2\u00d0\u00be\u00d0\u00b7\u00d0\u00b4\u00d1\u0192\u00d1\u02c6\u00d0\u00bd\u00d1\u2039\u00d1\u2026 \u00d1\u02c6\u00d0\u00b0\u00d1\u20ac\u00d0\u00be\u00d0\u00b2 \u00d0\u00bd\u00d0\u00b5 \u00d0\u00bd\u00d0\u00b0\u00d0\u00b9\u00d0\u00b4\u00d0\u00b5\u00d0\u00bd");
             return 0;
@@ -308,7 +308,7 @@ public class CosmeticsManager {
                 String visualKey = ((specialType == null ? "default" : specialType.toUpperCase()) + "|" +
                     material.name() + "|" + color.toUpperCase(java.util.Locale.ROOT));
                 if (!seenBalloonVisuals.add(visualKey)) {
-                    this.debug("ÐŸÑ€Ð¾Ð¿ÑƒÑ‰ÐµÐ½ Ð´ÑƒÐ±Ð»Ð¸ÐºÐ°Ñ‚ ÑˆÐ°Ñ€Ð¸ÐºÐ° " + id + " (visual=" + visualKey + ")");
+                    this.debug("Пропущен дубликат шарика " + id + " (visual=" + visualKey + ")");
                     continue;
                 }
                 String permission = "smcosm.balloon." + id;
@@ -324,7 +324,7 @@ public class CosmeticsManager {
     }
 
     private int loadDeathEffects() {
-        YamlConfiguration config = this.plugin.getModuleManager().loadModuleConfig("SM_cosmetics", "death_effects.yml");
+        YamlConfiguration config = this.plugin.getModuleManager().loadModuleConfig("CM_cosmetics", "death_effects.yml");
         if (config == null) {
             this.debug("\u00d0\u0161\u00d0\u00be\u00d0\u00bd\u00d1\u201e\u00d0\u00b8\u00d0\u00b3 \u00d1\u008d\u00d1\u201e\u00d1\u201e\u00d0\u00b5\u00d0\u00ba\u00d1\u201a\u00d0\u00be\u00d0\u00b2 \u00d1\u0081\u00d0\u00bc\u00d0\u00b5\u00d1\u20ac\u00d1\u201a\u00d0\u00b8 \u00d0\u00bd\u00d0\u00b5 \u00d0\u00bd\u00d0\u00b0\u00d0\u00b9\u00d0\u00b4\u00d0\u00b5\u00d0\u00bd");
             return 0;
@@ -377,7 +377,7 @@ public class CosmeticsManager {
     }
 
     private int loadWeaponEffectsFromFile(String fileName, String label) {
-        YamlConfiguration config = this.plugin.getModuleManager().loadModuleConfig("SM_cosmetics", fileName);
+        YamlConfiguration config = this.plugin.getModuleManager().loadModuleConfig("CM_cosmetics", fileName);
         if (config == null) {
             this.debug(label + " config not found: " + fileName);
             return 0;
@@ -567,20 +567,8 @@ public class CosmeticsManager {
     }
 
     private void debug(String message) {
-        this.plugin.getDebugSystem().log("CosmeticsManager", this.decodeMojibake(message));
+        this.plugin.getDebugSystem().log("CosmeticsManager", message);
     }
 
-    private String decodeMojibake(String text) {
-        if (text == null || !(text.contains("Ð") || text.contains("Ñ") || text.contains("â") || text.contains("Ã"))) {
-            return text;
-        }
-        try {
-            byte[] bytes = text.getBytes(Charset.forName("Windows-1252"));
-            return new String(bytes, StandardCharsets.UTF_8);
-        } catch (Exception ignored) {
-            return text;
-        }
-    }
+    
 }
-
-

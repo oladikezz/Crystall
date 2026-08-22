@@ -6,10 +6,9 @@ import net.minestom.server.entity.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,7 +21,7 @@ public class RoleManager {
 
     public static void init() {
         if (ROLES_FILE.exists()) {
-            try (FileReader reader = new FileReader(ROLES_FILE)) {
+            try (Reader reader = new InputStreamReader(new FileInputStream(ROLES_FILE), StandardCharsets.UTF_8)) {
                 Type type = new TypeToken<Map<String, String>>(){}.getType();
                 Map<String, String> raw = gson.fromJson(reader, type);
                 if (raw != null) {
@@ -44,7 +43,7 @@ public class RoleManager {
             if (ROLES_FILE.getParentFile() != null && !ROLES_FILE.getParentFile().exists()) {
                 ROLES_FILE.getParentFile().mkdirs();
             }
-            try (FileWriter writer = new FileWriter(ROLES_FILE)) {
+            try (Writer writer = new OutputStreamWriter(new FileOutputStream(ROLES_FILE), StandardCharsets.UTF_8)) {
                 Map<String, String> raw = new ConcurrentHashMap<>();
                 roles.forEach((k, v) -> raw.put(k.toString(), v));
                 gson.toJson(raw, writer);

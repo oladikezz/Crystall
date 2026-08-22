@@ -5,10 +5,9 @@ import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,7 +19,7 @@ public class BanManager {
 
     public static void init() {
         if (BANS_FILE.exists()) {
-            try (FileReader reader = new FileReader(BANS_FILE)) {
+            try (Reader reader = new InputStreamReader(new FileInputStream(BANS_FILE), StandardCharsets.UTF_8)) {
                 Type type = new TypeToken<Map<String, String>>(){}.getType();
                 Map<String, String> raw = gson.fromJson(reader, type);
                 if (raw != null) {
@@ -38,7 +37,7 @@ public class BanManager {
             if (BANS_FILE.getParentFile() != null && !BANS_FILE.getParentFile().exists()) {
                 BANS_FILE.getParentFile().mkdirs();
             }
-            try (FileWriter writer = new FileWriter(BANS_FILE)) {
+            try (Writer writer = new OutputStreamWriter(new FileOutputStream(BANS_FILE), StandardCharsets.UTF_8)) {
                 gson.toJson(bannedPlayers, writer);
             }
         } catch (Exception e) {

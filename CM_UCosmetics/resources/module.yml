@@ -1,6 +1,0 @@
-name: CM_UCosmetics
-version: 1.0.0
-author: deforce_
-description: UltraCosmetics as SMPS hot-loadable module. All cosmetics available from the start.
-main: be.isach.ultracosmetics.UCosmeticsModule
-

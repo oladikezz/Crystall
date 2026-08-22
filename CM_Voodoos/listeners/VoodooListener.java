@@ -58,7 +58,7 @@ public class VoodooListener implements Listener {
    /** Players currently forced to lie down */
    private final Set<UUID> layingDown = ConcurrentHashMap.newKeySet();
    /**
-    * Drop guard â€” when a player presses Q with a voodoo item, the server fires
+    * Drop guard — when a player presses Q with a voodoo item, the server fires
     * PlayerDropItemEvent (cancelled) AND PlayerInteractEvent (LEFT_CLICK_AIR).
     */
    private final Set<UUID> recentDropAttempts = ConcurrentHashMap.newKeySet();
@@ -125,7 +125,7 @@ public class VoodooListener implements Listener {
    private Player resolveTarget(Player owner, String targetName) {
       Player target = Bukkit.getPlayerExact(targetName);
       if (target == null || !target.isOnline()) return null;
-      // If target is vanished and owner can't see vanished players â†’ treat as offline
+      // If target is vanished and owner can't see vanished players -> treat as offline
       if (isVanished(target) && !owner.hasPermission("smvanish.see")) {
          return null;
       }
@@ -378,7 +378,7 @@ public class VoodooListener implements Listener {
    }
 
    // ================================================================
-   // Shift+LMB â€” Teleport target to owner
+   // Shift+LMB — Teleport target to owner
    // ================================================================
    private void handleShiftTeleport(Player owner, String targetName, FileConfiguration config) {
       if (!config.getBoolean("shift-ability.enabled", true)) return;

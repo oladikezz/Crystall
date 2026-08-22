@@ -76,9 +76,9 @@ public class AntiBotSystem {
                 return;
             }
 
-            // 3. Лимит одновременных аккаунтов на один IP
+            // 3. Лимит одновременных аккаунтов на один IP (не применяется к localhost / proxy)
             int currentOnline = onlineByIp.getOrDefault(ip, 0);
-            if (currentOnline >= MAX_ACCOUNTS_PER_IP) {
+            if (!ip.equals("127.0.0.1") && !ip.equals("localhost") && currentOnline >= MAX_ACCOUNTS_PER_IP) {
                 player.kick(Component.text("Превышен лимит одновременных аккаунтов на один IP (макс. " + MAX_ACCOUNTS_PER_IP + ").", NamedTextColor.RED));
                 return;
             }
