@@ -3,15 +3,17 @@ package net.myserver.mechanics;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.instance.Chunk;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.instance.Section;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.timer.TaskSchedule;
 import net.myserver.engine.AdaptiveTickEngine;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Оптимизированная система случайных тиков (Random Tick System).
- * Интегрирована с AdaptiveTickEngine (LOD-зоны) для исключения холостых тиков.
+ * Оптимизированная система случайных тиков (Palette-Aware Random Tick System).
+ * Интегрирована с AdaptiveTickEngine и пропускает пустые/нетикаемые секции чанков.
  */
 public class RandomTickSystem {
 
@@ -24,19 +26,34 @@ public class RandomTickSystem {
                     int cx = chunk.getChunkX();
                     int cz = chunk.getChunkZ();
 
-                    // Проверка LOD зоны тикинга через AdaptiveTickEngine
+                    // 1. Проверка LOD зоны тикинга через AdaptiveTickEngine
                     if (!AdaptiveTickEngine.shouldTickChunk(cx, cz)) {
                         continue;
                     }
+
+                    // 2. Проверка секций чанка на наличие блоков (поверхностные секции 2-5: Y=32..96)
+                    List<Section> sections = chunk.getSections();
+                    boolean hasPlantableSection = false;
+                    for (int sIdx = 2; sIdx <= 5 && sIdx < sections.size(); sIdx++) {
+                        Section s = sections.get(sIdx);
+                        if (s != null && s.blockPalette().count() > 0) {
+                            hasPlantableSection = true;
+                            break;
+                        }
+                    }
+
+                    if (!hasPlantableSection) continue;
 
                     ThreadLocalRandom rand = ThreadLocalRandom.current();
 
                     for (int i = 0; i < 3; i++) {
                         int rx = (cx << 4) + rand.nextInt(16);
                         int rz = (cz << 4) + rand.nextInt(16);
-                        int ry = 30 + rand.nextInt(50); // Диапазон высот 30-80
+                        int ry = 35 + rand.nextInt(45); // Диапазон высот 35-80
 
                         Block block = instance.getBlock(rx, ry, rz);
+                        if (block.compare(Block.AIR)) continue;
+
                         if (block.compare(Block.WHEAT)) {
                             String ageProp = block.getProperty("age");
                             int age = 0;

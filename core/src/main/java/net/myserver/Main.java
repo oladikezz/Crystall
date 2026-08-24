@@ -201,7 +201,7 @@ public class Main {
                 instance.saveInstance();
             }
             for (Player player : MinecraftServer.getConnectionManager().getOnlinePlayers()) {
-                PlayerDataManager.savePlayer(player);
+                PlayerDataManager.savePlayerSync(player);
             }
 
             regionChunkLoader.closeAll();

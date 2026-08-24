@@ -13,13 +13,13 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 /**
  * Высокопроизводительный загрузчик чанков в формате Region Files (32x32 чанка на файл).
- * Включает Thread-Local пулы сжатия (Zero-GC Deflate/Inflate), палитровое сжатие и пропуск пустых секций.
+ * Включает Async Write Coalescing (дедупликация и отложенная запись), Thread-Local пулы сжатия и пропуск пустых секций.
  */
 public class RegionChunkLoader implements ChunkLoader {
     private static final Logger log = LoggerFactory.getLogger(RegionChunkLoader.class);
@@ -29,6 +29,28 @@ public class RegionChunkLoader implements ChunkLoader {
 
     private final File regionFolder;
     private final Map<Long, RegionFile> openRegions = new ConcurrentHashMap<>();
+
+    // Очередь асинхронной отложенной записи чанков (Coalescing Write-Behind)
+    private static class PendingChunkWrite {
+        final int chunkX;
+        final int chunkZ;
+        final byte[] data;
+        final int length;
+
+        PendingChunkWrite(int chunkX, int chunkZ, byte[] data, int length) {
+            this.chunkX = chunkX;
+            this.chunkZ = chunkZ;
+            this.data = data;
+            this.length = length;
+        }
+    }
+
+    private final Map<Long, PendingChunkWrite> pendingWrites = new ConcurrentHashMap<>();
+    private final ExecutorService asyncDiskWriter = Executors.newSingleThreadExecutor(r -> {
+        Thread t = new Thread(r, "Crystall-Async-Region-Writer");
+        t.setDaemon(true);
+        return t;
+    });
 
     // Thread-Local компрессоры для исключения повторных аллокаций
     private static final ThreadLocal<Deflater> deflaterPool = ThreadLocal.withInitial(() -> new Deflater(Deflater.DEFAULT_COMPRESSION));
@@ -40,6 +62,13 @@ public class RegionChunkLoader implements ChunkLoader {
         if (!this.regionFolder.exists()) {
             this.regionFolder.mkdirs();
         }
+
+        // Фоновый цикл сброса очереди отложенной записи (flush каждые 500 мс)
+        Executors.newSingleThreadScheduledExecutor(r -> {
+            Thread t = new Thread(r, "Crystall-Region-Flush-Timer");
+            t.setDaemon(true);
+            return t;
+        }).scheduleWithFixedDelay(this::flushPendingWrites, 500, 500, TimeUnit.MILLISECONDS);
     }
 
     private static class RegionFile implements AutoCloseable {
@@ -98,14 +127,14 @@ public class RegionChunkLoader implements ChunkLoader {
         }
     }
 
-    private RegionFile getRegionFile(int regionX, int regionZ) {
-        long key = FastMath.packChunkPos(regionX, regionZ);
+    private synchronized RegionFile getRegionFile(int rx, int rz) {
+        long key = FastMath.packChunkPos(rx, rz);
         return openRegions.computeIfAbsent(key, k -> {
+            File path = new File(regionFolder, "r." + rx + "." + rz + ".mcr");
             try {
-                File file = new File(regionFolder, "r." + regionX + "." + regionZ + ".dat");
-                return new RegionFile(file);
+                return new RegionFile(path);
             } catch (IOException e) {
-                log.error("[RegionChunkLoader] Ошибка открытия региона ({}, {}): {}", regionX, regionZ, e.getMessage());
+                log.error("[RegionChunkLoader] Ошибка открытия региона ({}, {}): {}", rx, rz, e.getMessage());
                 return null;
             }
         });
@@ -113,6 +142,19 @@ public class RegionChunkLoader implements ChunkLoader {
 
     @Override
     public @Nullable Chunk loadChunk(@NotNull Instance instance, int chunkX, int chunkZ) {
+        long chunkKey = FastMath.packChunkPos(chunkX, chunkZ);
+        
+        // 1. Проверяем наличие еще не сброшенных на диск данных в очереди записи
+        PendingChunkWrite pending = pendingWrites.get(chunkKey);
+        if (pending != null) {
+            try {
+                Chunk deserialized = deserializeChunk(instance, chunkX, chunkZ, pending.data, pending.length);
+                if (deserialized != null) {
+                    return deserialized;
+                }
+            } catch (Exception ignored) {}
+        }
+
         int rx = chunkX >> 5;
         int rz = chunkZ >> 5;
         int lx = chunkX & 31;
@@ -120,85 +162,84 @@ public class RegionChunkLoader implements ChunkLoader {
         int index = lx + (lz * 32);
 
         RegionFile rf = getRegionFile(rx, rz);
-        if (rf == null) return null;
+        if (rf == null) {
+            return null;
+        }
 
         try {
             byte[] compressed = rf.readChunk(index);
-            if (compressed == null) return null;
+            if (compressed == null) {
+                return null;
+            }
 
-            // Распаковка через ThreadLocal Inflater (Zero-GC)
-            Inflater inflater = inflaterPool.get();
-            inflater.reset();
-            inflater.setInput(compressed);
+            return deserializeChunk(instance, chunkX, chunkZ, compressed, compressed.length);
+        } catch (Exception e) {
+            log.error("[RegionChunkLoader] Ошибка чтения чанка ({}, {}): {}", chunkX, chunkZ, e.getMessage());
+            return null;
+        }
+    }
 
-            byte[] decompressed = ioBufferPool.get();
-            int decompressedBytes = inflater.inflate(decompressed);
+    private Chunk deserializeChunk(Instance instance, int chunkX, int chunkZ, byte[] compressed, int length) throws Exception {
+        Inflater inflater = inflaterPool.get();
+        inflater.reset();
+        inflater.setInput(compressed, 0, length);
 
-            DataInputStream in = new DataInputStream(new ByteArrayInputStream(decompressed, 0, decompressedBytes));
-            Chunk chunk = instance.getChunkSupplier().createChunk(instance, chunkX, chunkZ);
-            int sectionMask = in.readInt();
+        byte[] rawBuffer = ioBufferPool.get();
+        int decompressedSize = inflater.inflate(rawBuffer);
 
-            for (int s = 0; s < TOTAL_SECTIONS; s++) {
-                if ((sectionMask & (1 << s)) == 0) {
-                    continue;
-                }
+        ByteArrayInputStream bais = new ByteArrayInputStream(rawBuffer, 0, decompressedSize);
+        DataInputStream in = new DataInputStream(bais);
 
-                int startY = -64 + (s * 16);
-                int paletteSize = in.readInt();
-                int[] palette = new int[paletteSize];
-                for (int p = 0; p < paletteSize; p++) {
-                    palette[p] = in.readInt();
-                }
+        int sectionMask = in.readInt();
+        Chunk chunk = instance.getChunk(chunkX, chunkZ);
+        if (chunk == null) {
+            chunk = new net.minestom.server.instance.DynamicChunk(instance, chunkX, chunkZ);
+        }
 
-                if (paletteSize == 1) {
-                    Block b = Block.fromStateId(palette[0]);
-                    if (b != null && !b.compare(Block.AIR)) {
-                        for (int y = 0; y < 16; y++) {
-                            for (int x = 0; x < 16; x++) {
-                                for (int z = 0; z < 16; z++) {
-                                    chunk.setBlock(x, startY + y, z, b);
-                                }
-                            }
-                        }
-                    }
-                } else {
+        for (int s = 0; s < TOTAL_SECTIONS; s++) {
+            if ((sectionMask & (1 << s)) == 0) continue;
+
+            int startY = -64 + (s * 16);
+            int paletteSize = in.readInt();
+            int[] palette = new int[paletteSize];
+            for (int p = 0; p < paletteSize; p++) {
+                palette[p] = in.readInt();
+            }
+
+            if (paletteSize == 1) {
+                Block singleBlock = Block.fromStateId(palette[0]);
+                if (singleBlock != null) {
                     for (int y = 0; y < 16; y++) {
                         for (int x = 0; x < 16; x++) {
                             for (int z = 0; z < 16; z++) {
-                                int paletteIdx = in.readByte() & 0xFF;
-                                if (paletteIdx < paletteSize) {
-                                    int stateId = palette[paletteIdx];
-                                    if (stateId != 0) {
-                                        Block b = Block.fromStateId(stateId);
-                                        if (b != null) {
-                                            chunk.setBlock(x, startY + y, z, b);
-                                        }
-                                    }
+                                chunk.setBlock(x, startY + y, z, singleBlock);
+                            }
+                        }
+                    }
+                }
+            } else {
+                for (int y = 0; y < 16; y++) {
+                    for (int x = 0; x < 16; x++) {
+                        for (int z = 0; z < 16; z++) {
+                            int pIdx = in.readUnsignedByte();
+                            if (pIdx < paletteSize) {
+                                Block b = Block.fromStateId(palette[pIdx]);
+                                if (b != null) {
+                                    chunk.setBlock(x, startY + y, z, b);
                                 }
                             }
                         }
                     }
                 }
             }
-            return chunk;
-        } catch (Exception e) {
-            log.error("[RegionChunkLoader] Ошибка десериализации чанка ({}, {}): {}", chunkX, chunkZ, e.getMessage());
-            return null;
         }
+        return chunk;
     }
 
     @Override
     public void saveChunk(@NotNull Chunk chunk) {
         int chunkX = chunk.getChunkX();
         int chunkZ = chunk.getChunkZ();
-        int rx = chunkX >> 5;
-        int rz = chunkZ >> 5;
-        int lx = chunkX & 31;
-        int lz = chunkZ & 31;
-        int index = lx + (lz * 32);
-
-        RegionFile rf = getRegionFile(rx, rz);
-        if (rf == null) return;
 
         try {
             byte[] rawBuffer = ioBufferPool.get();
@@ -272,13 +313,50 @@ public class RegionChunkLoader implements ChunkLoader {
             byte[] compressedBuffer = new byte[uncompressed.length + 64];
             int compressedSize = deflater.deflate(compressedBuffer);
 
-            rf.writeChunk(index, compressedBuffer, compressedSize);
+            // Сохраняем в очередь асинхронной отложенной записи (Write Coalescing)
+            long key = FastMath.packChunkPos(chunkX, chunkZ);
+            byte[] snapshot = Arrays.copyOf(compressedBuffer, compressedSize);
+            pendingWrites.put(key, new PendingChunkWrite(chunkX, chunkZ, snapshot, compressedSize));
         } catch (Exception e) {
-            log.error("[RegionChunkLoader] Ошибка сохранения чанка ({}, {}): {}", chunkX, chunkZ, e.getMessage());
+            log.error("[RegionChunkLoader] Ошибка сжатия чанка ({}, {}): {}", chunkX, chunkZ, e.getMessage());
         }
     }
 
+    public void flushPendingWrites() {
+        if (pendingWrites.isEmpty()) return;
+
+        asyncDiskWriter.submit(() -> {
+            Iterator<Map.Entry<Long, PendingChunkWrite>> it = pendingWrites.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<Long, PendingChunkWrite> entry = it.next();
+                it.remove();
+
+                PendingChunkWrite pw = entry.getValue();
+                int rx = pw.chunkX >> 5;
+                int rz = pw.chunkZ >> 5;
+                int lx = pw.chunkX & 31;
+                int lz = pw.chunkZ & 31;
+                int index = lx + (lz * 32);
+
+                RegionFile rf = getRegionFile(rx, rz);
+                if (rf != null) {
+                    try {
+                        rf.writeChunk(index, pw.data, pw.length);
+                    } catch (IOException e) {
+                        log.error("[RegionChunkLoader] Ошибка фоновой записи чанка ({}, {}): {}", pw.chunkX, pw.chunkZ, e.getMessage());
+                    }
+                }
+            }
+        });
+    }
+
     public void closeAll() {
+        flushPendingWrites();
+        asyncDiskWriter.shutdown();
+        try {
+            asyncDiskWriter.awaitTermination(5, TimeUnit.SECONDS);
+        } catch (InterruptedException ignored) {}
+
         for (RegionFile rf : openRegions.values()) {
             try {
                 rf.close();

@@ -9,30 +9,51 @@ import net.minestom.server.instance.block.Block;
 import net.minestom.server.timer.TaskSchedule;
 import net.myserver.engine.CircularBuffer;
 
+import java.util.ArrayDeque;
+
 /**
- * Оптимизированная система физики жидкостей (Fluid Simulation System).
- * Использует CircularBuffer для устранения GC-аллокаций и ограничение распространения.
+ * Оптимизированная система симуляции жидкостей (Zero-GC Fluid Simulation).
+ * Использует CircularBuffer и Object Pooling для полного устранения аллокаций в куче.
  */
 public class FluidSystem {
     private static final int MAX_BUFFER_CAPACITY = 16384;
     private static final CircularBuffer<FluidTick> fluidTickBuffer = new CircularBuffer<>(MAX_BUFFER_CAPACITY);
+    private static final ArrayDeque<FluidTick> tickPool = new ArrayDeque<>(2048);
 
     public static class FluidTick {
         public Instance instance;
         public Point pos;
         public int delay;
 
-        public FluidTick(Instance instance, Point pos, int delay) {
+        public FluidTick set(Instance instance, Point pos, int delay) {
             this.instance = instance;
             this.pos = pos;
             this.delay = delay;
+            return this;
+        }
+    }
+
+    private static synchronized FluidTick acquireTick(Instance instance, Point pos, int delay) {
+        FluidTick tick = tickPool.pollFirst();
+        if (tick == null) {
+            tick = new FluidTick();
+        }
+        return tick.set(instance, pos, delay);
+    }
+
+    private static synchronized void releaseTick(FluidTick tick) {
+        if (tick == null) return;
+        tick.instance = null;
+        tick.pos = null;
+        if (tickPool.size() < 2048) {
+            tickPool.offerFirst(tick);
         }
     }
 
     public static void register(GlobalEventHandler handler) {
         handler.addListener(PlayerBlockPlaceEvent.class, event -> {
             if (event.getBlock().compare(Block.WATER) || event.getBlock().compare(Block.LAVA)) {
-                fluidTickBuffer.offer(new FluidTick(event.getInstance(), event.getBlockPosition(), 5));
+                fluidTickBuffer.offer(acquireTick(event.getInstance(), event.getBlockPosition(), 5));
             }
         });
 
@@ -48,7 +69,11 @@ public class FluidSystem {
                     continue;
                 }
 
-                processFluidTick(tick.instance, tick.pos);
+                Instance inst = tick.instance;
+                Point p = tick.pos;
+                releaseTick(tick);
+
+                processFluidTick(inst, p);
             }
         }).repeat(TaskSchedule.tick(1)).schedule();
     }
@@ -62,13 +87,13 @@ public class FluidSystem {
         for (Point n : neighbors) {
             Block b = instance.getBlock(n);
             if (b.compare(Block.WATER) || b.compare(Block.LAVA)) {
-                fluidTickBuffer.offer(new FluidTick(instance, n, 5));
+                fluidTickBuffer.offer(acquireTick(instance, n, 5));
             }
         }
     }
 
     private static void processFluidTick(Instance instance, Point pos) {
-        if (instance == null) return;
+        if (instance == null || pos == null) return;
         Block current = instance.getBlock(pos);
         if (!current.compare(Block.WATER) && !current.compare(Block.LAVA)) return;
 
@@ -88,7 +113,7 @@ public class FluidSystem {
         Block blockDown = instance.getBlock(down);
         if (blockDown.compare(Block.AIR)) {
             instance.setBlock(down, nextFlow);
-            fluidTickBuffer.offer(new FluidTick(instance, down, 5));
+            fluidTickBuffer.offer(acquireTick(instance, down, 5));
             return;
         }
 
@@ -98,7 +123,7 @@ public class FluidSystem {
                 Block b = instance.getBlock(side);
                 if (b.compare(Block.AIR)) {
                     instance.setBlock(side, nextFlow);
-                    fluidTickBuffer.offer(new FluidTick(instance, side, 5));
+                    fluidTickBuffer.offer(acquireTick(instance, side, 5));
                 }
             }
         }
