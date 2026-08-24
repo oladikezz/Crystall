@@ -16,6 +16,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Высокопроизводительная система защиты от бот-атак с фиксированными кольцевыми буферами.
+ */
 public class AntiBotSystem {
     private static final Logger log = LoggerFactory.getLogger(AntiBotSystem.class);
 
@@ -23,7 +26,36 @@ public class AntiBotSystem {
     private static final int MAX_JOINS_PER_IP_5SEC = 3;
     private static final int ATTACK_MODE_THRESHOLD = 8;
 
-    private static final Map<String, List<Long>> joinHistoryByIp = new ConcurrentHashMap<>();
+    private static class IpJoinHistory {
+        long[] timestamps = new long[8];
+        int count = 0;
+        int head = 0;
+
+        synchronized boolean addAndCheckRateLimit(long now, int maxJoins) {
+            // Очищаем старые таймстемпы (> 5000 мс)
+            int active = 0;
+            for (int i = 0; i < count; i++) {
+                int idx = (head - 1 - i + 8) % 8;
+                if (now - timestamps[idx] <= 5000) {
+                    active++;
+                }
+            }
+
+            timestamps[head] = now;
+            head = (head + 1) % 8;
+            if (count < 8) count++;
+
+            return active >= maxJoins;
+        }
+
+        synchronized long getLastJoin() {
+            if (count == 0) return 0;
+            int lastIdx = (head - 1 + 8) % 8;
+            return timestamps[lastIdx];
+        }
+    }
+
+    private static final Map<String, IpJoinHistory> joinHistoryByIp = new ConcurrentHashMap<>();
     private static final Map<String, Integer> onlineByIp = new ConcurrentHashMap<>();
     private static final Set<UUID> unverifiedPlayers = ConcurrentHashMap.newKeySet();
 
@@ -53,25 +85,20 @@ public class AntiBotSystem {
 
             globalJoinsThisSecond.incrementAndGet();
 
+            IpJoinHistory history = joinHistoryByIp.computeIfAbsent(ip, k -> new IpJoinHistory());
+
             // Если включен режим атаки, блокируем быстро повторяющиеся входы
             if (attackMode) {
-                List<Long> history = joinHistoryByIp.getOrDefault(ip, Collections.emptyList());
-                if (!history.isEmpty() && now - history.get(history.size() - 1) < 4000) {
+                long lastJoin = history.getLastJoin();
+                if (lastJoin > 0 && now - lastJoin < 4000) {
                     player.kick(Component.text("Сервер находится под защитой от ботов. Повторите попытку через пару секунд.", NamedTextColor.RED));
                     return;
                 }
             }
 
-            // 2. Лимит частоты подключений с одного IP (Rate Limit)
-            joinHistoryByIp.compute(ip, (k, list) -> {
-                if (list == null) list = new ArrayList<>();
-                list.removeIf(time -> now - time > 5000);
-                list.add(now);
-                return list;
-            });
-
-            List<Long> recentJoins = joinHistoryByIp.get(ip);
-            if (recentJoins != null && recentJoins.size() > MAX_JOINS_PER_IP_5SEC) {
+            // 2. Лимит частоты подключений с одного IP (Rate Limit через кольцевой буфер)
+            boolean rateLimited = history.addAndCheckRateLimit(now, MAX_JOINS_PER_IP_5SEC);
+            if (rateLimited) {
                 player.kick(Component.text("Слишком частые подключения с вашего IP. Подождите 5 секунд.", NamedTextColor.RED));
                 return;
             }

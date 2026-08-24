@@ -18,9 +18,12 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Высокопроизводительный античит с нулевыми аллокациями на горячем пути PlayerMoveEvent.
+ */
 public class AntiCheatSystem {
     private static final Logger log = LoggerFactory.getLogger(AntiCheatSystem.class);
-    private static final double MAX_SPEED_SQUARED = 2.0; // С запасом на прыжки
+    private static final double MAX_SPEED_SQUARED = 2.25; // С запасом на прыжки и ускорение
     public static final Map<UUID, Integer> airTicks = new ConcurrentHashMap<>();
 
     public static void register(GlobalEventHandler handler) {
@@ -34,17 +37,24 @@ public class AntiCheatSystem {
             Instance instance = player.getInstance();
             if (instance == null) return;
 
-            // Проверка Speedhack (расстояние по X и Z за одно событие движения)
-            double distanceSq = oldPos.distanceSquared(new Pos(newPos.x(), oldPos.y(), newPos.z()));
-            if (distanceSq > MAX_SPEED_SQUARED) {
+            // 1. Проверка Speedhack (расстояние по горизонтали XZ без создания новых Pos объектов)
+            double dx = newPos.x() - oldPos.x();
+            double dz = newPos.z() - oldPos.z();
+            double horizontalDistSq = dx * dx + dz * dz;
+
+            if (horizontalDistSq > MAX_SPEED_SQUARED) {
                 event.setCancelled(true);
                 alertAdmins(player, "Speedhack (FastMove)");
                 return;
             }
 
-            // Проверка Flyhack
-            boolean isAirBelow = instance.getBlock(newPos.sub(0, 0.5, 0)).compare(Block.AIR);
-            boolean isAirAtLegs = instance.getBlock(newPos).compare(Block.AIR);
+            // 2. Проверка Flyhack без создания Point/Pos объектов
+            int bx = newPos.blockX();
+            int by = newPos.blockY();
+            int bz = newPos.blockZ();
+
+            boolean isAirBelow = instance.getBlock(bx, (int) Math.floor(newPos.y() - 0.5), bz).compare(Block.AIR);
+            boolean isAirAtLegs = instance.getBlock(bx, by, bz).compare(Block.AIR);
             
             if (isAirBelow && isAirAtLegs) {
                 if (newPos.y() >= oldPos.y() - 0.05) { 

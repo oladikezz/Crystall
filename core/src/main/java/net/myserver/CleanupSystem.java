@@ -6,6 +6,7 @@ import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.myserver.admin.AntiCheatSystem;
 import net.myserver.combat.CombatSystem;
 import net.myserver.engine.SpatialGrid;
+import net.myserver.mechanics.AntiDupeSystem;
 import net.myserver.mechanics.DimensionManager;
 
 import java.util.UUID;
@@ -22,6 +23,7 @@ public class CleanupSystem {
             // 1. Очистка игровых кулдаунов и боевой системы
             DimensionManager.lastPortalTime.remove(uuid);
             CombatSystem.lastHitTimes.remove(uuid);
+            AntiDupeSystem.clearPlayer(uuid);
 
             // 2. Очистка структур античита
             AntiCheatSystem.airTicks.remove(uuid);

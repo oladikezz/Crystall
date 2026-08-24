@@ -3,13 +3,14 @@ package net.myserver.engine;
 import net.minestom.server.coordinate.Point;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.event.GlobalEventHandler;
-import net.minestom.server.event.entity.EntitySpawnEvent;
 import net.minestom.server.event.entity.EntityDespawnEvent;
+import net.minestom.server.event.entity.EntitySpawnEvent;
 import net.minestom.server.instance.Instance;
 import net.myserver.engine.primitive.Long2ObjectOpenHashMap;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -91,21 +92,19 @@ public class SpatialGrid {
     }
 
     /**
-     * Быстрый поиск всех сущностей в радиусе (в блоках).
+     * Нулевая по аллокациям итерация по всем сущностям в радиусе (Zero-Allocation Visitor).
      */
-    public static List<Entity> getEntitiesInRadius(Instance instance, Point center, double radius) {
-        if (instance == null || center == null) return Collections.emptyList();
+    public static void forEachEntityInRadius(Instance instance, Point center, double radius, Consumer<Entity> action) {
+        if (instance == null || center == null || action == null) return;
 
-        List<Entity> result = new ArrayList<>();
         double radiusSq = radius * radius;
-
         int minChunkX = (int) Math.floor((center.x() - radius) / 16.0);
         int maxChunkX = (int) Math.floor((center.x() + radius) / 16.0);
         int minChunkZ = (int) Math.floor((center.z() - radius) / 16.0);
         int maxChunkZ = (int) Math.floor((center.z() + radius) / 16.0);
 
         Long2ObjectOpenHashMap<Set<Entity>> instanceGrid = grid.get(instance);
-        if (instanceGrid == null) return Collections.emptyList();
+        if (instanceGrid == null) return;
 
         for (int cx = minChunkX; cx <= maxChunkX; cx++) {
             for (int cz = minChunkZ; cz <= maxChunkZ; cz++) {
@@ -116,13 +115,22 @@ public class SpatialGrid {
                 if (entities != null && !entities.isEmpty()) {
                     for (Entity e : entities) {
                         if (e.getInstance() == instance && e.getPosition().distanceSquared(center) <= radiusSq) {
-                            result.add(e);
+                            action.accept(e);
                         }
                     }
                 }
             }
         }
+    }
 
+    /**
+     * Быстрый поиск всех сущностей в радиусе (в блоках).
+     */
+    public static List<Entity> getEntitiesInRadius(Instance instance, Point center, double radius) {
+        if (instance == null || center == null) return Collections.emptyList();
+
+        List<Entity> result = new ArrayList<>();
+        forEachEntityInRadius(instance, center, radius, result::add);
         return result;
     }
 
@@ -132,55 +140,37 @@ public class SpatialGrid {
     public static int countEntitiesInRadius(Instance instance, Point center, double radius, Predicate<Entity> filter) {
         if (instance == null || center == null) return 0;
 
-        int count = 0;
-        double radiusSq = radius * radius;
-
-        int minChunkX = (int) Math.floor((center.x() - radius) / 16.0);
-        int maxChunkX = (int) Math.floor((center.x() + radius) / 16.0);
-        int minChunkZ = (int) Math.floor((center.z() - radius) / 16.0);
-        int maxChunkZ = (int) Math.floor((center.z() + radius) / 16.0);
-
-        Long2ObjectOpenHashMap<Set<Entity>> instanceGrid = grid.get(instance);
-        if (instanceGrid == null) return 0;
-
-        for (int cx = minChunkX; cx <= maxChunkX; cx++) {
-            for (int cz = minChunkZ; cz <= maxChunkZ; cz++) {
-                Set<Entity> entities;
-                synchronized (instanceGrid) {
-                    entities = instanceGrid.get(FastMath.packChunkPos(cx, cz));
-                }
-                if (entities != null && !entities.isEmpty()) {
-                    for (Entity e : entities) {
-                        if (e.getInstance() == instance && (filter == null || filter.test(e))) {
-                            if (e.getPosition().distanceSquared(center) <= radiusSq) {
-                                count++;
-                            }
-                        }
-                    }
-                }
+        int[] count = new int[1];
+        forEachEntityInRadius(instance, center, radius, e -> {
+            if (filter == null || filter.test(e)) {
+                count[0]++;
             }
-        }
+        });
 
-        return count;
+        return count[0];
     }
 
+    /**
+     * Zero-Allocation поиск ближайшей сущности заданного класса.
+     */
     @SuppressWarnings("unchecked")
     public static <T extends Entity> T getNearestEntity(Instance instance, Point center, Class<T> entityClass, double maxRadius) {
-        List<Entity> inRadius = getEntitiesInRadius(instance, center, maxRadius);
-        T nearest = null;
-        double minDistanceSq = maxRadius * maxRadius;
+        if (instance == null || center == null) return null;
 
-        for (Entity e : inRadius) {
+        final Object[] nearest = new Object[1];
+        final double[] minDistanceSq = new double[]{maxRadius * maxRadius};
+
+        forEachEntityInRadius(instance, center, maxRadius, e -> {
             if (entityClass.isInstance(e)) {
                 double distSq = e.getPosition().distanceSquared(center);
-                if (distSq < minDistanceSq) {
-                    minDistanceSq = distSq;
-                    nearest = (T) e;
+                if (distSq < minDistanceSq[0]) {
+                    minDistanceSq[0] = distSq;
+                    nearest[0] = e;
                 }
             }
-        }
+        });
 
-        return nearest;
+        return (T) nearest[0];
     }
 
     public static void clearInstance(Instance instance) {

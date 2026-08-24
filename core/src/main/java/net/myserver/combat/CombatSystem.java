@@ -9,6 +9,7 @@ import net.minestom.server.event.entity.EntityAttackEvent;
 import net.minestom.server.event.entity.EntityDeathEvent;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
+import net.myserver.engine.FastMath;
 import net.myserver.entities.CustomZombie;
 
 import java.util.Map;
@@ -17,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Высокопроизводительная боевая система (Combat System).
- * Оптимизирована прямыми сравнениями материалов без аллокаций строк на каждый удар.
+ * Оптимизирована прямыми сравнениями материалов и FastMath тригонометрией для knockback.
  */
 public class CombatSystem {
     public static final Map<UUID, Long> lastHitTimes = new ConcurrentHashMap<>();
@@ -68,9 +69,9 @@ public class CombatSystem {
                     livingTarget.setHealth(newHp);
                 }
 
-                // Knockback
+                // Fast Knockback calculation via FastMath LUT
                 float yaw = attacker.getPosition().yaw();
-                livingTarget.takeKnockback(0.35f, Math.sin(yaw * (Math.PI / 180)), -Math.cos(yaw * (Math.PI / 180)));
+                livingTarget.takeKnockback(0.35f, FastMath.sinDeg(yaw), -FastMath.cosDeg(yaw));
             }
         });
 
