@@ -39,12 +39,13 @@ public class WebMapServer {
                     <html lang="ru">
                     <head>
                         <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1">
                         <title>Crystall Server - Live Web Map</title>
                         <style>
                             body { margin: 0; background: #121214; color: #fff; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; }
-                            header { width: 100%; padding: 15px 30px; background: #1a1a1f; box-sizing: border-box; display: flex; justify-content: space-between; border-bottom: 2px solid #2a2a35; }
-                            #canvas-container { margin: 20px; border: 2px solid #00ffcc; border-radius: 12px; background: #1e1e24; box-shadow: 0 0 20px rgba(0,255,204,0.2); }
-                            canvas { display: block; border-radius: 10px; }
+                            header { width: 100%; padding: 15px 30px; background: #1a1a1f; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; justify-content: space-between; border-bottom: 2px solid #2a2a35; }
+                            #canvas-container { width: min(800px, calc(100% - 40px)); margin: 20px; box-sizing: border-box; border: 2px solid #00ffcc; border-radius: 12px; background: #1e1e24; box-shadow: 0 0 20px rgba(0,255,204,0.2); }
+                            canvas { display: block; width: 100%; height: auto; border-radius: 10px; }
                         </style>
                     </head>
                     <body>
