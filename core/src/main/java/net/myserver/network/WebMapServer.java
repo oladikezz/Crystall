@@ -44,25 +44,32 @@ public class WebMapServer {
                         <style>
                             body { margin: 0; background: #121214; color: #fff; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; }
                             header { width: 100%; padding: 15px 30px; background: #1a1a1f; box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; justify-content: space-between; border-bottom: 2px solid #2a2a35; }
+                            header h2 { margin: 0; font-size: clamp(1rem, 4vw, 1.5rem); }
                             #canvas-container { width: min(800px, calc(100% - 40px)); margin: 20px; box-sizing: border-box; border: 2px solid #00ffcc; border-radius: 12px; background: #1e1e24; box-shadow: 0 0 20px rgba(0,255,204,0.2); }
+                            #map-status { margin: 0 20px 20px; text-align: center; }
                             canvas { display: block; width: 100%; height: auto; border-radius: 10px; }
                         </style>
                     </head>
                     <body>
                         <header>
                             <h2>✦ CRYSTALL LIVE MAP ✦</h2>
-                            <div id="stats">Загрузка данных...</div>
+                            <div id="stats" role="status" aria-live="polite">Загрузка данных...</div>
                         </header>
                         <div id="canvas-container">
                             <canvas id="mapCanvas" width="800" height="600"></canvas>
                         </div>
+                        <p id="map-status" role="status"></p>
                         <script>
                             const canvas = document.getElementById('mapCanvas');
                             const ctx = canvas.getContext('2d');
+                            const stats = document.getElementById('stats');
+                            const mapStatus = document.getElementById('map-status');
+                            let lastUpdated = null;
 
                             async function updateMap() {
                                 try {
-                                    const res = await fetch('/api/players');
+                                    const res = await fetch('/api/players', { signal: AbortSignal.timeout(5000), cache: 'no-store' });
+                                    if (!res.ok) throw new Error('Player data unavailable');
                                     const data = await res.json();
                                     
                                     ctx.fillStyle = '#18181c';
@@ -94,10 +101,23 @@ public class WebMapServer {
                                         }
                                     });
 
-                                    document.getElementById('stats').innerText = 'Онлайн: ' + data.players.length + ' игроков';
-                                } catch(e) {}
+                                    stats.innerText = 'Онлайн: ' + data.players.length + ' игроков';
+                                    lastUpdated = new Date().toLocaleTimeString('ru-RU');
+                                    mapStatus.innerText = data.players.length === 0
+                                        ? 'Сейчас на сервере нет игроков.'
+                                        : data.players.every(p => p.x === undefined || p.z === undefined)
+                                            ? 'Координаты игроков скрыты настройками сервера.'
+                                            : '';
+                                } catch(e) {
+                                    stats.innerText = 'Нет связи с сервером';
+                                    mapStatus.innerText = (lastUpdated
+                                        ? 'Данные могут быть устаревшими. Последнее обновление: ' + lastUpdated + '. '
+                                        : 'Не удалось загрузить карту. ')
+                                        + 'Повторяем подключение автоматически…';
+                                } finally {
+                                    setTimeout(updateMap, 1000);
+                                }
                             }
-                            setInterval(updateMap, 1000);
                             updateMap();
                         </script>
                     </body>
